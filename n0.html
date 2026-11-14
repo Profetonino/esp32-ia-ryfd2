@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>N0 · Conoce tu placa y tu entorno · RyFD II</title>
+<link rel="stylesheet" href="assets/estilos.css?v=890831c4">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">Robótica y Fabricación Digital II · 2.º Bachillerato · IES Murillo</div>
+    <h1>De la ESP32 a la IA</h1>
+    <p class="sub">Repaso de sensores, actuadores, servidor web y ESP-NOW con la ESP32 STEAMakers, y prácticas con la ESP32 STEAMakers AI.</p>
+  </div>
+</header>
+<nav class="menu" aria-label="Secciones">
+  <div class="wrap" id="menu">
+    <a href="index.html">Inicio</a>
+    <a href="seguridad.html">Antes de enchufar</a>
+    <a href="n0.html" class="on" aria-current="page">N0 · Tu placa</a>
+    <a href="n1.html">N1 · Digital</a>
+    <a href="n1b.html">N1b · Salidas y PWM</a>
+    <a href="n2.html">N2 · Analógico</a>
+    <a href="n2b.html">N2b · I2C y especiales</a>
+    <a href="pi.html">PI · Sensores + actuadores</a>
+    <a href="n3.html">N3 · Servidor web</a>
+    <a href="n4.html">N4 · ESP-NOW</a>
+    <span class="soon" title="Próximamente">N5 · Placa AI</span>
+    <span class="soon" title="Próximamente">N6 · Agentes con IA</span>
+    <span class="soon" title="Próximamente">Reto final</span>
+  </div>
+</nav>
+
+<main>
+<section class="page" id="n0">
+  <h2 class="lvl"><span class="badge">N0</span> Conoce tu placa y tu entorno</h2>
+  <p class="lead">En RyFD I aprendiste a programar una placa con todo integrado. Esta es distinta: la <b>ESP32 STEAMakers</b> viene casi «desnuda», con conectores para que tú decidas qué sensores y actuadores le pones. Eso te da libertad, pero también responsabilidad: ahora el montaje lo haces tú.</p>
+  <div class="row"><span class="pill">⏱️ 1 sesión</span><span class="pill">Repaso</span></div>
+
+  <div class="alerta">
+    <h3>⚠️ Antes de empezar</h3>
+    <p>Lee <a href="seguridad.html"><b>«Antes de enchufar nada»</b></a>. En este nivel no vas a conectar sensores, pero sí vas a trabajar con la placa, y la primera norma ya se aplica: el interruptor de tensión, siempre en <span class="chip33">3,3 V</span>.</p>
+  </div>
+
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🎯</span> Objetivo</h3>
+    <ul>
+      <li>Recordar la estructura de un sistema de control: entradas, proceso y salidas.</li>
+      <li>Reconocer las partes de la ESP32 STEAMakers y qué hace cada una.</li>
+      <li>Preparar el entorno de programación y enviar un primer programa a la placa.</li>
+      <li>Leer en la consola serie lo que la placa te cuenta.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🧠</span> Recordando: un sistema de control</h3>
+    <p>Todo sistema automático, de un ascensor a un invernadero, se puede dividir en tres partes: las <b>entradas</b> (sensores, que convierten una magnitud física en una señal eléctrica), el <b>proceso</b> (la unidad de control, que decide) y las <b>salidas</b> (actuadores, que convierten la orden en algo que se ve, se oye o se mueve).</p>
+    <p>Hay un detalle que hace diferente al sistema programado: su memoria empieza vacía. No sabe qué hacer hasta que se lo cuentas con tu programa. Por eso, en esta placa, <b>tú eres el diseñador del cerebro y también del cableado</b>.</p>
+  </div>
+
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🔎</span> Tu placa por dentro y por fuera</h3>
+    <p>La ESP32 STEAMakers está basada en un chip <b>ESP32-WROOM-32</b>. Tiene el mismo tamaño y la misma colocación de conectores que una placa Arduino UNO, así que admite sus shields, pero por dentro es mucho más potente.</p>
+    <table class="t">
+      <tr><th>Característica</th><th>Qué significa para ti</th></tr>
+      <tr><td>Procesador de dos núcleos y 520 KB de memoria RAM</td><td>Puede hacer varias cosas a la vez, como atender la Wi-Fi y leer sensores.</td></tr>
+      <tr><td>Wi-Fi y Bluetooth (4.2 y BLE)</td><td>Se conecta a internet o a tu móvil sin añadir nada. Es la base de los niveles N3 y N4.</td></tr>
+      <tr><td>Conectores tipo Dupont con alimentación</td><td>Conectas sensores y actuadores sin soldar.</td></tr>
+      <tr><td>Interruptor 3,3 V / 5 V</td><td>Cambia la alimentación (3,3 V o 5 V) de los conectores de entrada y salida y de los I2C. <b>Nosotros lo dejamos siempre en 3,3 V.</b></td></tr>
+      <tr><td>Conectores I2C (hasta 5 dispositivos)</td><td>Con cuatro cables puedes conectar pantallas y sensores digitales avanzados.</td></tr>
+      <tr><td>Zócalo para tarjeta microSD</td><td>Guardar datos aunque se desconecte la placa.</td></tr>
+      <tr><td>Medidor de tensión y de intensidad</td><td>La placa sabe con qué tensión la alimentas. Útil si algo falla.</td></tr>
+      <tr><td>Botón de reinicio</td><td>Reinicia el programa sin quitar el cable.</td></tr>
+      <tr><td>Entradas analógicas de 12 bits</td><td>Leen valores entre 0 y 4095.</td></tr>
+    </table>
+    <h4>Tu placa de verdad: aprende a leer la serigrafía</h4>
+    <p>La <b>serigrafía</b> son los textos impresos sobre la placa. Junto a cada fila de conectores te dice qué pin es. Es lo primero que hay que mirar antes de conectar nada, porque el nombre del pin en la placa manda sobre cualquier esquema.</p>
+    <figure class="fig"><img src="img/placa_keyestudio.jpg" alt="Foto de la placa ESP32 Plus STEAMakers de Keyestudio vista desde arriba, con la serigrafía de los pines" style="max-width:420px"><figcaption>Placa ESP32 Plus STEAMakers (Keyestudio) vista desde arriba. En el bloque «ANALOG» se leen 2, 4, 35 y 34; en las filas digitales de la derecha, io18, io19, io23, io5, io13 e io12, y debajo io14, io27, io16, io17, io25 e io26.</figcaption></figure>
+    <ul><li>Cada columna de pines tiene tres filas: <b>G</b> (masa, el negativo), <b>V</b> (alimentación) y <b>S</b> (señal, la que se programa).</li>
+    <li>Las cuatro entradas analógicas del bloque «ANALOG» son A0 = IO2, A1 = IO4, A2 = IO35 y A3 = IO34.</li>
+    <li>Las filas digitales llevan el número del pin al lado. Por ejemplo, el pin D2 del editor es el io26.</li></ul>
+    <h4>Dos marcas, la misma forma</h4>
+    <figure class="fig"><img src="img/placas_dos_marcas.jpg" alt="Dos placas ESP32 Plus con el mismo formato, una de conectores azules (ACEBOTT) y otra de conectores amarillos (Keyestudio)"><figcaption>A la izquierda, una placa ESP32 Plus de ACEBOTT (conectores azules); a la derecha, la ESP32 Plus STEAMakers de Keyestudio (conectores amarillos).</figcaption></figure>
+    <p>Puede que veas placas de marcas distintas con el mismo tamaño y colocación. En las dos de la foto, la serigrafía de los pines coincide (2, 4, 35 y 34 en analógicas, y los mismos números en las filas digitales). Aun así, <b>lee siempre la serigrafía de tu placa</b> y no te fíes de que sea igual que la de otro compañero.</p>
+    <p style="font-size:.9rem;color:var(--ink2)">Fuente: manual «Actividades y retos con ESP32 Plus STEAMakers» (Robolot Team / Innova Didactic).</p>
+  </div>
+
+    <div class="card">
+    <h3 class="sec-title"><span class="ico">⚠️</span> Pines con trampa: cuáles evitar y por qué</h3>
+
+    <p>No todos los pines de la ESP32 valen para todo. Algunos se leen al arrancar para decidir cómo se inicia la placa; otros están conectados a la memoria interna; otros no pueden ser salidas; y otros dejan de leer valores analógicos cuando el Wi-Fi está encendido. Conocer estas limitaciones te ahorra horas de buscar un fallo que no está en tu programa.</p>
+    <div class="note warn"><b>Cómo se nota un conflicto.</b> La placa no arranca o se reinicia sola, el editor no logra subir el programa, la consola no muestra nada tras el reinicio o la lectura analógica «se vuelve loca» al activar el Wi-Fi. En casi todos los casos desaparece al desconectar el módulo del pin problemático.</div>
+    <h4>1 · Las reglas, una a una</h4>
+    <table class="t stack"><tr><th>Qué pasa</th><th>Pines</th><th>Por qué</th><th>Consecuencia si lo ignoras</th></tr><tr><td data-l="Qué pasa"><b>Pines de arranque</b> (strapping)</td><td data-l="Pines">IO0, IO2, IO5, IO12, IO15</td><td data-l="Por qué">Al arrancar o reiniciar, la ESP32 lee el nivel de estos cinco pines para decidir cómo arranca. Cada uno tiene una resistencia interna que fija un valor por defecto: IO0, IO5 e IO15 a 1; IO2 e IO12 a 0. Después del arranque se pueden usar con normalidad.</td><td data-l="Consecuencia si lo ignoras">Un módulo que fuerce un nivel distinto durante el arranque puede dejar la placa en otro modo, sin arrancar o sin poder programarla. Se nota porque «a veces no arranca» y funciona al desconectar el módulo.</td></tr><tr><td data-l="Qué pasa"><b>IO12</b>: el más delicado</td><td data-l="Pines">IO12 (MTDI)</td><td data-l="Por qué">En el arranque fija la tensión de alimentación de la memoria flash: con 0 (por defecto) usa 3,3 V; con 1 selecciona 1,8 V.</td><td data-l="Consecuencia si lo ignoras">Si un sensor o módulo pone IO12 a 1 al encender, la placa puede no arrancar. Evítalo para módulos que dan un 1 en reposo.</td></tr><tr><td data-l="Qué pasa"><b>Modo de descarga</b></td><td data-l="Pines">IO0 e IO2</td><td data-l="Por qué">Para programar la placa se necesita IO0 a 0 e IO2 a 0 en el reinicio.</td><td data-l="Consecuencia si lo ignoras">Un módulo que fuerce IO0 o IO2 a un nivel contrario puede impedir que el editor suba el programa.</td></tr><tr><td data-l="Qué pasa"><b>Mensajes de arranque</b></td><td data-l="Pines">IO15 (MTDO)</td><td data-l="Por qué">Si está a 0 en el arranque, se silencia el mensaje inicial por el puerto serie (por defecto está a 1).</td><td data-l="Consecuencia si lo ignoras">La consola «no dice nada» tras reiniciar. Además, IO15 forma parte de la ranura SD de la placa.</td></tr><tr><td data-l="Qué pasa"><b>Memoria flash interna</b></td><td data-l="Pines">IO6 a IO11</td><td data-l="Por qué">Están conectados a la memoria flash dentro del módulo y no salen a la placa.</td><td data-l="Consecuencia si lo ignoras">No hay que tocarlos. Si algún programa los usa, la placa se cuelga.</td></tr><tr><td data-l="Qué pasa"><b>Memoria PSRAM</b></td><td data-l="Pines">IO16 e IO17</td><td data-l="Por qué">Según el módulo: los que llevan PSRAM (por ejemplo, los WROVER o algunas versiones «R2») los usan para ella.</td><td data-l="Consecuencia si lo ignoras">En tu placa (módulo ESP32-WROOM-32, según Keyestudio) están libres. Si algún día cambias de módulo, confirma que no lleva PSRAM.</td></tr><tr><td data-l="Qué pasa"><b>Solo entrada</b></td><td data-l="Pines">IO34, IO35, IO36 e IO39 (IO37 e IO38 no salen del módulo)</td><td data-l="Por qué">Solo pueden leer: no se pueden configurar como salida y no tienen resistencia interna de pull-up ni pull-down.</td><td data-l="Consecuencia si lo ignoras">No sirven para LED, relé o zumbador. Para un pulsador necesitan una resistencia externa (los módulos G-V-S ya la llevan).</td></tr><tr><td data-l="Qué pasa"><b>Wi-Fi y entradas analógicas</b></td><td data-l="Pines">Los pines ADC2: IO0, IO2, IO4, IO12, IO13, IO14, IO15, IO25, IO26 e IO27</td><td data-l="Por qué">El convertidor analógico ADC2 lo comparte el Wi-Fi. Con el Wi-Fi activo, la lectura analógica de esos pines falla (la documentación de Espressif lo indica con claridad, y cita el Wi-Fi, no el Bluetooth).</td><td data-l="Consecuencia si lo ignoras">En N3, N4 o el panel IoT, un sensor analógico en esos pines no lee. Como entrada o salida <b>digital</b> funcionan sin problema.</td></tr><tr><td data-l="Qué pasa"><b>Puerto serie del USB</b></td><td data-l="Pines">IO1 (TX) e IO3 (RX)</td><td data-l="Por qué">Son los pines del puerto serie por el que programas la placa y lees la consola.</td><td data-l="Consecuencia si lo ignoras">Si los usas como entrada o salida, tendrás conflictos con la consola y con la subida del programa.</td></tr><tr><td data-l="Qué pasa"><b>Depuración JTAG</b></td><td data-l="Pines">IO12, IO13, IO14 e IO15</td><td data-l="Por qué">Son los pines de un depurador por hardware que en clase no usamos.</td><td data-l="Consecuencia si lo ignoras">No suponen problema. Solo son relevantes por los pines de arranque IO12 e IO15.</td></tr></table>
+    <h4>2 · Tu placa, pin a pin</h4>
+    <p>Los rótulos son los de la serigrafía de tu placa. Cuando el editor muestra un nombre de pin distinto (D2, D3…), se indica en la segunda columna.</p>
+    <table class="t stack"><tr><th>Pin (serigrafía)</th><th>Editor</th><th>Estado</th><th>Motivo en tu placa</th></tr><tr><td data-l="Pin (serigrafía)">io18 · io19 · io23</td><td data-l="Editor">—</td><td data-l="Estado"><span class="sem v">Libres</span></td><td data-l="Motivo en tu placa">Sin condiciones. Son los mejores para empezar (salida o entrada digital).</td></tr><tr><td data-l="Pin (serigrafía)">io5</td><td data-l="Editor">—</td><td data-l="Estado"><span class="sem a">Con cuidado</span></td><td data-l="Motivo en tu placa">Pin de arranque: por defecto está a 1; si un módulo lo fuerza, puede afectar al arranque.</td></tr><tr><td data-l="Pin (serigrafía)">io12</td><td data-l="Editor">D8</td><td data-l="Estado"><span class="sem r">Evitar</span></td><td data-l="Motivo en tu placa">Pin de arranque que fija la tensión de la flash. Con un módulo que dé 1 en reposo, la placa puede no arrancar.</td></tr><tr><td data-l="Pin (serigrafía)">io13</td><td data-l="Editor">D9</td><td data-l="Estado"><span class="sem v">Libre para digital</span></td><td data-l="Motivo en tu placa">Es ADC2: no lo uses como entrada analógica con Wi-Fi.</td></tr><tr><td data-l="Pin (serigrafía)">io14</td><td data-l="Editor">D7</td><td data-l="Estado"><span class="sem v">Libre para digital</span></td><td data-l="Motivo en tu placa">Es ADC2 (sin analógico con Wi-Fi).</td></tr><tr><td data-l="Pin (serigrafía)">io27</td><td data-l="Editor">D6</td><td data-l="Estado"><span class="sem v">Libre para digital</span></td><td data-l="Motivo en tu placa">Es ADC2 (sin analógico con Wi-Fi). Lo usamos para el zumbador.</td></tr><tr><td data-l="Pin (serigrafía)">io16 · io17</td><td data-l="Editor">D5 · D4</td><td data-l="Estado"><span class="sem a">Revisar</span></td><td data-l="Motivo en tu placa">Libres con tu módulo (sin PSRAM). Lo usamos para el LED y el relé.</td></tr><tr><td data-l="Pin (serigrafía)">io25 · io26</td><td data-l="Editor">D3 · D2</td><td data-l="Estado"><span class="sem v">Libres para digital</span></td><td data-l="Motivo en tu placa">Son ADC2 y salidas de DAC. Lo usamos para LED y para sensores digitales.</td></tr><tr><td data-l="Pin (serigrafía)">A0 · pin 2</td><td data-l="Editor">—</td><td data-l="Estado"><span class="sem a">Con cuidado</span></td><td data-l="Motivo en tu placa">Es IO2: pin de arranque y ADC2. Con Wi-Fi no sirve para leer analógicos.</td></tr><tr><td data-l="Pin (serigrafía)">A1 · pin 4</td><td data-l="Editor">—</td><td data-l="Estado"><span class="sem a">Con cuidado</span></td><td data-l="Motivo en tu placa">Es IO4: ADC2. Con Wi-Fi no sirve para leer analógicos.</td></tr><tr><td data-l="Pin (serigrafía)">A2 · pin 35</td><td data-l="Editor">—</td><td data-l="Estado"><span class="sem g">Solo entrada (ADC1)</span></td><td data-l="Motivo en tu placa">Lee bien con Wi-Fi. Es la mejor opción para un sensor analógico. Solo entrada.</td></tr><tr><td data-l="Pin (serigrafía)">A3 · pin 34</td><td data-l="Editor">—</td><td data-l="Estado"><span class="sem g">Solo entrada (ADC1)</span></td><td data-l="Motivo en tu placa">Lee bien con Wi-Fi. Es la mejor opción para un sensor analógico. Solo entrada.</td></tr><tr><td data-l="Pin (serigrafía)">io0</td><td data-l="Editor">—</td><td data-l="Estado"><span class="sem r">Evitar</span></td><td data-l="Motivo en tu placa">Pin de arranque (modo de descarga) y ADC2. Aparece como io0 en el conector de la izquierda y no es para sensores.</td></tr><tr><td data-l="Pin (serigrafía)">io36 · io39</td><td data-l="Editor">—</td><td data-l="Estado"><span class="sem r">No los uses</span></td><td data-l="Motivo en tu placa">Solo entrada. La serigrafía los rotula como «consumption» (V/I): parecen medir la tensión y la corriente de la propia placa.</td></tr><tr><td data-l="Pin (serigrafía)">io15 · io32 · io33</td><td data-l="Editor">—</td><td data-l="Estado"><span class="sem r">No los uses</span></td><td data-l="Motivo en tu placa">Los rotula la placa como pines de la ranura SD (SCK, DO, DI). IO15 es además pin de arranque.</td></tr><tr><td data-l="Pin (serigrafía)">SDA · SCL</td><td data-l="Editor">—</td><td data-l="Estado"><span class="sem g">Reservados</span></td><td data-l="Motivo en tu placa">Es el bus I2C. En el ESP32 suelen ser IO21 e IO22 (confírmalo con el manual de tu placa). No los uses para otra cosa.</td></tr></table>
+    <h4>3 · Cuatro reglas para no fallar</h4>
+    <ol class="steps"><li><b>Digitales:</b> empieza por io18, io19 e io23, que no tienen ninguna condición. Después, io25, io26, io27, io14 e io13.</li><li><b>Analógicos:</b> usa siempre A2 (IO35) o A3 (IO34). Funcionan con Wi-Fi.</li><li><b>Nunca</b> pongas un módulo que dé un 1 en reposo en io12, y evita io0, io2 e io15 si no es imprescindible.</li><li><b>Si «a veces no arranca»</b>, desconecta los módulos y vuelve a probar. Después, ve conectándolos de uno en uno.</li></ol>
+    <div class="note info"><b>Fuentes.</b> Datasheet de la ESP32 (Espressif), apartado de pines de arranque; guía de la API de ADC y de GPIO de ESP-IDF; datasheet del módulo ESP32-WROOM-32E; documentación de Keyestudio de la placa KS5016. La asignación de SDA y SCL a IO21 e IO22 es la habitual de la ESP32, no figura en el manual de la placa.</div>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">💻</span> Tu entorno de programación</h3>
+    <p>Seguimos programando por bloques, como en RyFD I, con <b>STEAMakersBlocks</b> (antes se llamaba ArduinoBlocks). Es una página web, pero necesita un programa auxiliar, el <b>Connector</b>, que es el que pasa el programa desde el navegador a la placa por el cable USB.</p>
+    <p>El orden importa, y es la causa de la mayoría de los problemas al empezar:</p>
+    <ol class="steps">
+      <li><b>Conecta la placa</b> al ordenador con su cable USB.</li>
+      <li><b>Abre el Connector</b> y déjalo abierto todo el rato.</li>
+      <li><b>Abre STEAMakersBlocks.</b> Debería aparecer el puerto COM que el ordenador ha asignado a tu placa.</li>
+    </ol>
+    <div class="note warn"><b>Si no aparece el puerto o falla el envío</b>, es que se ha roto el vínculo entre la placa y el ordenador. Desconecta la placa, cierra el Connector, vuelve a conectar la placa y abre otra vez el Connector. Después, el navegador.</div>
+  </div>
+
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🧪</span> Práctica N0 · Hola desde la consola</h3>
+    <p>El hilo conductor de este material, igual que en RyFD I, es el <b>puerto serie</b>: una conversación entre la placa y tu ordenador. Es la forma más rápida de saber qué está pasando dentro de la placa, y la primera herramienta cuando algo no funciona.</p>
+    <details class="paso"><summary>🛠️ Móntalo paso a paso</summary><div class="in">
+      <ol class="steps">
+        <li>Crea un proyecto nuevo con el tipo de proyecto de tu placa, la ESP32 STEAMakers.</li>
+        <li>En el bloque <b>Inicializar</b>, pon el bloque que <b>inicia el puerto serie a 115200 baudios</b>. Esa velocidad es la que usa este material.</li>
+        <li>En el <b>Bucle</b>, añade un bloque que <b>envíe un texto por el puerto serie</b> con el mensaje «Hola desde la ESP32», y después una espera de <b>1000 milisegundos</b>.</li>
+        <li>Envía el programa a la placa. Elige el puerto COM que apareció.</li>
+        <li>Abre la <b>consola serie</b> de la plataforma, selecciona 115200 baudios y pulsa Conectar. Cada segundo debería aparecer una línea nueva.</li>
+      </ol>
+      <p style="font-size:.9rem;color:var(--ink2)">Los nombres exactos de los bloques pueden variar un poco según la versión de la plataforma. Si no encuentras uno, búscalo en las categorías de comunicación y puerto serie.</p>
+    </div></details>
+    <div class="note info"><b>Si la consola no muestra nada:</b> comprueba que la velocidad es 115200 en el programa y en la consola, y pulsa el botón de reinicio de la placa.</div>
+
+    <h4>Retos</h4>
+    <div class="retos">
+      <div class="reto b"><div class="tag">Básico</div><h4>Cambia el mensaje</h4><p>Haz que la placa escriba tu nombre y el de tu grupo, y que lo repita cada 2 segundos.</p></div>
+      <div class="reto m"><div class="tag">Medio</div><h4>Cuenta los mensajes</h4><p>Muestra un contador que aumente en uno cada vez y que se vea en la consola junto al texto: «mensaje número 1», «mensaje número 2»…</p></div>
+      <div class="reto p"><div class="tag">Pro</div><h4>¿Cuánto tarda de verdad?</h4><p>Comprueba si «esperar 1000 ms» y «un mensaje por segundo» son lo mismo. Mide cuántos mensajes salen en un minuto, explica la diferencia y razona de dónde viene.</p></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">📓</span> Qué anotar en el porfolio</h3>
+    <ul>
+      <li>Una captura de tu programa de bloques y otra de la consola con la salida.</li>
+      <li>Qué puerto COM te asignó el ordenador y si tuviste que repetir el orden de conexión.</li>
+      <li>Una frase con lo que has descubierto sobre el puerto serie.</li>
+    </ul>
+  </div>
+
+  <div class="card quiz" data-id="n0">
+    <h3 class="sec-title"><span class="ico">✅</span> Comprueba lo que has aprendido</h3>
+    <div class="q" data-ans="b" data-why="Las señales de la ESP32 son de 3,3 V en cualquier posición; el interruptor cambia la alimentación de los conectores." data-hint="Piensa en qué tensión admiten los pines de la ESP32.">
+      <p>1. ¿En qué posición dejamos siempre el interruptor de tensión de la placa?</p>
+      <label><input type="radio" name="n0q1" value="a"> En 5 V, porque así los sensores van más fuertes.</label>
+      <label><input type="radio" name="n0q1" value="b"> En 3,3 V, porque los pines de la ESP32 no admiten 5 V.</label>
+      <label><input type="radio" name="n0q1" value="c"> Da igual, solo cambia la luz del LED.</label>
+    </div>
+    <div class="q" data-ans="c" data-why="Es un sistema de control: sensores (entradas), unidad de control (proceso) y actuadores (salidas)." data-hint="Recuerda el esquema entradas, proceso y salidas.">
+      <p>2. En un sistema de control, ¿qué papel hace un sensor?</p>
+      <label><input type="radio" name="n0q2" value="a"> Es el proceso: decide qué hacer.</label>
+      <label><input type="radio" name="n0q2" value="b"> Es una salida: mueve o enciende algo.</label>
+      <label><input type="radio" name="n0q2" value="c"> Es una entrada: convierte una magnitud física en una señal eléctrica.</label>
+    </div>
+    <div class="q" data-ans="a" data-why="El Connector es el programa que pasa el programa desde el navegador a la placa." data-hint="Piensa en quién conecta la web con el cable USB.">
+      <p>3. ¿Para qué sirve el Connector?</p>
+      <label><input type="radio" name="n0q3" value="a"> Para pasar el programa desde el navegador a la placa por el cable USB.</label>
+      <label><input type="radio" name="n0q3" value="b"> Para dar internet a la placa.</label>
+      <label><input type="radio" name="n0q3" value="c"> Para guardar el porfolio en la nube.</label>
+    </div>
+    <div class="q" data-ans="b" data-why="La consola serie es una conversación entre la placa y el ordenador; ambos deben usar la misma velocidad." data-hint="Una conversación solo funciona si los dos hablan a la misma velocidad.">
+      <p>4. La consola no muestra nada, o muestra símbolos raros. ¿Qué comprobarías primero?</p>
+      <label><input type="radio" name="n0q4" value="a"> Que el cable USB sea de color negro.</label>
+      <label><input type="radio" name="n0q4" value="b"> Que la velocidad (baudios) sea la misma en el programa y en la consola.</label>
+      <label><input type="radio" name="n0q4" value="c"> Que el navegador sea Chrome.</label>
+    </div>
+    <div class="q" data-ans="c" data-why="Con la tensión por debajo de unos 4,8 V la placa no funciona bien, sobre todo la Wi-Fi." data-hint="Piensa en qué pasa si la placa no recibe la tensión que necesita.">
+      <p>5. Más adelante, la placa se reinicia sola al usar la Wi-Fi. ¿Qué podría estar pasando?</p>
+      <label><input type="radio" name="n0q5" value="a"> Que el programa tiene demasiados bloques.</label>
+      <label><input type="radio" name="n0q5" value="b"> Que el router está apagado.</label>
+      <label><input type="radio" name="n0q5" value="c"> Que el cable o el puerto USB no entregan suficiente tensión.</label>
+    </div>
+    <p><button type="button" class="chk">Comprobar</button><span class="score"></span></p>
+  </div>
+</section>
+
+<div class="pager"><a href="seguridad.html">← Antes de enchufar</a><a href="n1.html">N1 · Digital →</a></div>
+</main>
+<footer>
+  <div class="wrap">
+    <p>Material de <b>Robótica y Fabricación Digital II</b> · IES Murillo (Sevilla). Autor: Juan Antonio Pérez Rodríguez.
+    Textos, programas y código bajo licencia <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">CC BY-NC-SA 4.0</a>.</p>
+  </div>
+</footer>
+<script src="assets/app.js?v=890831c4"></script>
+</body>
+</html>

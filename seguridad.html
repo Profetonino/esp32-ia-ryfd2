@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Antes de enchufar nada · RyFD II</title>
+<link rel="stylesheet" href="assets/estilos.css?v=890831c4">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">Robótica y Fabricación Digital II · 2.º Bachillerato · IES Murillo</div>
+    <h1>De la ESP32 a la IA</h1>
+    <p class="sub">Repaso de sensores, actuadores, servidor web y ESP-NOW con la ESP32 STEAMakers, y prácticas con la ESP32 STEAMakers AI.</p>
+  </div>
+</header>
+<nav class="menu" aria-label="Secciones">
+  <div class="wrap" id="menu">
+    <a href="index.html">Inicio</a>
+    <a href="seguridad.html" class="on" aria-current="page">Antes de enchufar</a>
+    <a href="n0.html">N0 · Tu placa</a>
+    <a href="n1.html">N1 · Digital</a>
+    <a href="n1b.html">N1b · Salidas y PWM</a>
+    <a href="n2.html">N2 · Analógico</a>
+    <a href="n2b.html">N2b · I2C y especiales</a>
+    <a href="pi.html">PI · Sensores + actuadores</a>
+    <a href="n3.html">N3 · Servidor web</a>
+    <a href="n4.html">N4 · ESP-NOW</a>
+    <span class="soon" title="Próximamente">N5 · Placa AI</span>
+    <span class="soon" title="Próximamente">N6 · Agentes con IA</span>
+    <span class="soon" title="Próximamente">Reto final</span>
+  </div>
+</nav>
+
+<main>
+<section class="page" id="seguridad">
+  <h2 class="lvl"><span class="badge reto">⚠️</span> Antes de enchufar nada</h2>
+  <p class="lead">Una ESP32 es barata, pero no es de usar y tirar: en el aula hay pocas, y una placa estropeada es una placa menos para todo el grupo. Estas normas son cortas y se aplican <b>siempre</b>, en todos los niveles.</p>
+
+  <div class="alerta">
+    <h3>🔌 Las cuatro normas</h3>
+    <ol>
+      <li><b>El interruptor de tensión, siempre en <span class="chip33">3,3 V</span>.</b> La placa tiene un interruptor que cambia entre 3,3 V y 5 V la alimentación de los conectores. Pero las señales de la ESP32 son de 3,3 V en cualquier posición: si un módulo se alimenta a 5 V, su salida puede llegar a 5 V, y la placa no está preparada para recibirla. El manual del fabricante lo dice así: «el ESP32 funciona a 3,3 V y las entradas analógicas solo podrán leer valores hasta 3,3 V».</li>
+      <li><b>Montas con la placa sin alimentar.</b> Primero desconectas el cable USB, después haces el montaje y, cuando está revisado, lo vuelves a conectar. Nunca cambies un cable con la placa encendida.</li>
+      <li><b>Una segunda persona revisa antes de conectar.</b> Aunque estés seguro, que lo mire otra persona del grupo con la lista de comprobación de abajo. La mayoría de los fallos se ven a la primera si los mira alguien que no ha hecho el cableado.</li>
+      <li><b>Si algo se calienta, huele raro o se apaga solo, desconecta el cable al instante</b> y avisa al profesor. No esperes a ver qué pasa.</li>
+    </ol>
+  </div>
+
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🧩</span> Qué módulos usamos</h3>
+    <p>Usamos los módulos del kit de sensores para micro:bit (Keyestudio). Tienen tres conexiones: <b>G</b> (masa, el negativo), <b>V</b> (la alimentación, el positivo) y <b>S</b> (la señal). Al estar pensados para una placa de 3,3 V, funcionan con la ESP32 con el interruptor en <span class="chip33">3,3 V</span>.</p>
+    <p>Si algún módulo que no sea de ese kit (un DHT11, una pantalla, un sensor suelto) trae otra indicación de tensión, consulta al profesor antes de conectarlo.</p>
+    <p><b>Pantalla LCD I2C:</b> se usa siempre con el interruptor en <span class="chip33">3,3 V</span>. Si no se ve nada, no la pases a 5 V: avisa al profesor.</p>
+    <p style="font-size:.9rem;color:var(--ink2)">Fuente: documentación del kit de 37 sensores para micro:bit de Keyestudio.</p>
+  </div>
+
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">⚡</span> Otras cosas que conviene saber</h3>
+    <ul>
+      <li><b>La alimentación por USB importa.</b> Según el manual de la placa, si la tensión baja de unos 4,8 V la placa no funciona bien, sobre todo la Wi-Fi. Si el servidor web se cuelga o la placa se reinicia sola, prueba con otro cable o con otro puerto USB antes de culpar al programa.</li>
+      <li><b>El pin IO0 no se conecta a nada.</b> El manual lo marca como «no conectar».</li>
+      <li><b>No conectes nada a A0 (IO2) si puedes evitarlo.</b> El manual del fabricante indica que A0 (GPIO02) comparte conexión con el sistema de grabación del programa: en la shield que lo usa, si el potenciómetro no está en su posición, el envío falla. Si has conectado algo a A0, desconéctalo antes de cargar el programa.</li>
+      <li><b>Con la Wi-Fi activada, dejan de leer A0 (IO2) y A1 (IO4), y también IO12, IO13, IO14, IO25, IO26 e IO27 si los usas como entrada analógica.</b> Según Espressif, es una limitación del chip: el Wi-Fi usa el ADC2, y lo veremos con detalle cuando lleguemos al servidor web.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">✅</span> Lista de comprobación antes de conectar</h3>
+    <p>La rellena quien revisa, no quien ha montado.</p>
+    <ul class="checklist">
+      <li><label><input type="checkbox"> El cable USB está <b>desconectado</b>.</label></li>
+      <li><label><input type="checkbox"> El interruptor de tensión está en <b>3,3 V</b>.</label></li>
+      <li><label><input type="checkbox"> Cada módulo es del kit de micro:bit (o lo ha aprobado el profesor).</label></li>
+      <li><label><input type="checkbox"> <b>G</b> del módulo va a <b>G</b> de la placa y <b>V</b> va a <b>V</b>, sin cruzar ninguno.</label></li>
+      <li><label><input type="checkbox"> <b>S</b> va al pin que dice el esquema, y a ninguno más.</label></li>
+      <li><label><input type="checkbox"> Ningún cable toca otro cable que no debe, y nada está suelto.</label></li>
+      <li><label><input type="checkbox"> No hay nada conectado a IO0 ni, al cargar el programa, a A0.</label></li>
+    </ul>
+    <p class="cl-count" style="font-weight:700">0 de 7 comprobaciones hechas</p>
+  </div>
+</section>
+
+<div class="pager"><a href="index.html">← Inicio</a><a href="n0.html">N0 · Tu placa →</a></div>
+</main>
+<footer>
+  <div class="wrap">
+    <p>Material de <b>Robótica y Fabricación Digital II</b> · IES Murillo (Sevilla). Autor: Juan Antonio Pérez Rodríguez.
+    Textos, programas y código bajo licencia <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">CC BY-NC-SA 4.0</a>.</p>
+  </div>
+</footer>
+<script src="assets/app.js?v=890831c4"></script>
+</body>
+</html>

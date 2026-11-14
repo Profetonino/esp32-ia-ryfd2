@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>N1b · Salidas digitales y PWM · RyFD II</title>
+<link rel="stylesheet" href="assets/estilos.css?v=890831c4">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">Robótica y Fabricación Digital II · 2.º Bachillerato · IES Murillo</div>
+    <h1>De la ESP32 a la IA</h1>
+    <p class="sub">Repaso de sensores, actuadores, servidor web y ESP-NOW con la ESP32 STEAMakers, y prácticas con la ESP32 STEAMakers AI.</p>
+  </div>
+</header>
+<nav class="menu" aria-label="Secciones">
+  <div class="wrap" id="menu">
+    <a href="index.html">Inicio</a>
+    <a href="seguridad.html">Antes de enchufar</a>
+    <a href="n0.html">N0 · Tu placa</a>
+    <a href="n1.html">N1 · Digital</a>
+    <a href="n1b.html" class="on" aria-current="page">N1b · Salidas y PWM</a>
+    <a href="n2.html">N2 · Analógico</a>
+    <a href="n2b.html">N2b · I2C y especiales</a>
+    <a href="pi.html">PI · Sensores + actuadores</a>
+    <a href="n3.html">N3 · Servidor web</a>
+    <a href="n4.html">N4 · ESP-NOW</a>
+    <span class="soon" title="Próximamente">N5 · Placa AI</span>
+    <span class="soon" title="Próximamente">N6 · Agentes con IA</span>
+    <span class="soon" title="Próximamente">Reto final</span>
+  </div>
+</nav>
+
+<main>
+<section class="page" id="n1b">
+  <h2 class="lvl"><span class="badge">N1b</span> Salidas digitales y PWM</h2>
+  <p class="lead">Hasta ahora la placa ha leído. En este nivel actúa: enciende, conmuta y suena. Empiezas con las salidas de todo o nada (LED, relé, zumbador), planteas el motor de corriente continua y cierras con el PWM, que permite regular el brillo de un LED y la velocidad de un motor.</p>
+  <div class="row"><span class="pill">⏱️ 1–2 sesiones</span><span class="pill">LED, relé, zumbador</span><span class="pill">Motor CC en clase</span><span class="pill">PWM</span></div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🎯</span> Entradas y salidas</h3>
+
+    <p>Un sensor digital <b>informa</b> a la placa: ella lee un 0 o un 1. En una <b>salida digital</b> ocurre lo contrario: la placa <b>escribe</b> un 0 o un 1 en un pin y el módulo conectado reacciona. El pin pasa a trabajar como <b>salida</b> (en el código aparece como <code>pinMode(…, OUTPUT)</code>) y los bloques que lo manejan escriben el valor.</p>
+    <table class="t"><tr><th>Módulo</th><th>Bloque en el editor</th><th>Con un 1</th><th>Ojo con…</th></tr><tr><td>LED</td><td>«Led»</td><td>Se enciende</td><td>Es la salida más sencilla: sirve para comprobar que el programa llega hasta el pin.</td></tr><tr><td>Relé</td><td>«Relé»</td><td>Cierra el contacto</td><td>Actúa como un interruptor controlado por la placa. Aísla el circuito que conmuta.</td></tr><tr><td>Zumbador activo</td><td>«Escribir digital» (pin en 1)</td><td>Suena con un tono fijo</td><td>Lleva el oscilador dentro: basta con darle tensión.</td></tr><tr><td>Zumbador pasivo</td><td>«Zumbador» (milisegundos y Hz)</td><td>Hace un chasquido</td><td>Necesita una señal con frecuencia; el bloque se la genera.</td></tr><tr><td>Motor de corriente continua</td><td>Se escribe más abajo</td><td>—</td><td>No se conecta directo a un pin: necesita un driver.</td></tr></table>
+    <div class="note info"><b>Comprueba el nivel activo.</b> En un LED encendido es un 1, pero algunos módulos de relé se activan con un 0. No lo supongas: prueba el módulo y apúntalo, igual que hacías con los sensores.</div>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">💡</span> LED: tu primera salida</h3>
+
+    <p>Un LED encendido durante un segundo y apagado durante otro. Es el «hola mundo» de las salidas y te sirve para comprobar el montaje.</p>
+    <figure class="fig"><img src="img/m_s1_led.png" alt="Módulo LED conectado con tres cables al pin IO25 (D3) de la placa"><figcaption>Esquema sobre la foto de la placa Keyestudio. La ACEBOTT es un clon con los mismos pines y rótulos (IO25, IO17, A2…), aunque sus conectores están colocados en otro sitio de la placa: guíate por los rótulos, no por la posición. Cada cable va a su columna: G negra, V roja, S amarilla.</figcaption></figure>
+    <figure class="fig"><img src="img/prog_s1_led.png" alt="Programa: enciende el LED del pin 25, espera 1000 ms, lo apaga y espera otros 1000 ms"><figcaption>Led ON, espera, Led OFF, espera. Se repite en el bucle.</figcaption></figure>
+    <details class="paso"><summary>🛠️ Montaje y puesta en marcha</summary><div class="in"><ol class="steps"><li>Con la placa desenchufada, conecta el módulo LED con G, V y S a IO25 (D3). Revísalo con la <a href="seguridad.html">lista de comprobación</a> y mira la serigrafía del módulo.</li><li>Conecta por USB, construye el programa y súbelo.</li><li>Si no parpadea, comprueba que el pin del bloque es el 25 (D3) y que el módulo está en el conector correcto.</li></ol></div></details>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🔌</span> Relé: un interruptor que manda la placa</h3>
+
+    <p>El relé es un interruptor accionado eléctricamente. La señal de la placa mueve un electroimán interno que abre o cierra un contacto, y ese contacto <b>conmuta otro circuito</b>, separado del de control. Por eso permite manejar cargas que la placa no podría alimentar por sí misma. Al activarse suele oírse un «clic».</p>
+    <figure class="fig"><img src="img/m_s1_rele.png" alt="Módulo de relé conectado con tres cables al pin IO17 (D4) de la placa"><figcaption>Esquema sobre la foto de la placa Keyestudio. La ACEBOTT es un clon con los mismos pines y rótulos (IO25, IO17, A2…), aunque sus conectores están colocados en otro sitio de la placa: guíate por los rótulos, no por la posición. Cada cable va a su columna: G negra, V roja, S amarilla.</figcaption></figure>
+    <figure class="fig"><img src="img/prog_s1_rele.png" alt="Programa: activa el relé del pin 17, espera 3000 ms, lo desactiva y espera otros 3000 ms"><figcaption>Relé ON durante 3 s y OFF durante 3 s. Se oye el clic al conmutar.</figcaption></figure>
+    <div class="note warn"><b>Seguridad.</b> En clase el relé solo se usa con tensiones bajas de seguridad (por ejemplo, una pila o la propia alimentación de la placa). <b>No se conecta tensión de red.</b> Si quieres conmutar algo más potente, se plantea con el profesor, que decide cómo hacerlo con garantías.</div>
+    <p>Los terminales del contacto se suelen rotular COM (común), NO (normalmente abierto) y NC (normalmente cerrado). Con el relé desactivado, COM está unido a NC; al activarlo, pasa a NO. Compruébalo con el multímetro en continuidad, sin tensión en el circuito.</p>
+    <details class="paso"><summary>🛠️ Montaje y puesta en marcha</summary><div class="in"><ol class="steps"><li>Con la placa desenchufada, conecta el módulo de relé con G, V y S a IO17 (D4).</li><li>Sube el programa y escucha el clic cada tres segundos.</li><li>Con el multímetro en continuidad, comprueba entre COM y NO que el contacto se cierra y se abre con el programa.</li></ol></div></details>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">⚙️</span> Motor de corriente continua</h3>
+
+    <p>Un motor de corriente continua <b>no se conecta directamente a un pin</b> de la placa. Un pin entrega una corriente muy pequeña y el motor necesita mucha más, sobre todo al arrancar. Además, al pararse genera picos de tensión que podrían dañar el pin. Se maneja siempre a través de un <b>driver</b> (un transistor o un módulo de puente en H, como los L298N o L298P que ofrece el editor), que recibe la señal de la placa y es quien alimenta al motor desde una fuente adecuada.</p>
+    <ul class="checklist"><li>Con <b>dos pines</b> del driver se elige el sentido de giro (adelante, atrás o parado).</li><li>Con una señal <b>PWM</b> en el pin de habilitación se controla la velocidad: a mayor ciclo de trabajo, más giro.</li><li>El motor se alimenta aparte; la masa de la fuente y la de la placa deben estar unidas.</li></ul>
+    <div class="note info"><b>Este apartado se explica en clase.</b> No lo montes por tu cuenta: el montaje del driver y la fuente lo vemos con el profesor antes de conectar nada.</div>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🔊</span> Zumbadores: activo y pasivo</h3>
+
+    <p>En el taller hay de los dos tipos y por fuera se parecen. Para distinguirlos hay una prueba sencilla: se le da un 1 (con un programa con «Escribir digital» a 1). El <b>activo</b> suena de forma continua porque lleva un oscilador interno. El <b>pasivo</b> solo hace un chasquido: necesita que la placa le envíe una señal con frecuencia, y entonces suena con el tono que tú decidas.</p>
+    <figure class="fig"><img src="img/m_s1_zumb.png" alt="Zumbador conectado con tres cables al pin IO27 (D6) de la placa"><figcaption>Esquema sobre la foto de la placa Keyestudio. La ACEBOTT es un clon con los mismos pines y rótulos (IO25, IO17, A2…), aunque sus conectores están colocados en otro sitio de la placa: guíate por los rótulos, no por la posición. Cada cable va a su columna: G negra, V roja, S amarilla. Sirve para el zumbador activo y para el pasivo.</figcaption></figure>
+    <figure class="fig"><img src="img/prog_s1_zumb_pas.png" alt="Programa: el bloque Zumbador en el pin 27 con 500 milisegundos y 440 hercios"><figcaption>Zumbador pasivo: el bloque recibe la duración (ms) y la frecuencia (Hz) del tono. 440 Hz es la nota La.</figcaption></figure>
+    <table class="t"><tr><th></th><th>Activo</th><th>Pasivo</th></tr><tr><td>Cómo se enciende</td><td>Un 1 en el pin, como un LED</td><td>Una señal con frecuencia (bloque «Zumbador»)</td></tr><tr><td>Tono</td><td>Fijo, el de fábrica</td><td>El que programes, así que puede tocar melodías</td></tr><tr><td>Qué enseña</td><td>Salida digital pura</td><td>Una salida que cambia con el tiempo, la antesala del PWM</td></tr></table>
+    <div class="note info"><b>Nota de uso.</b> El bloque «Zumbador» de este editor está pensado para el pasivo. Con un zumbador activo sonará, pero siempre con su propio tono.</div>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🌗</span> PWM: salidas que no son solo 0 o 1</h3>
+
+    <p>Un pin digital solo puede dar 0 o 1. Pero si lo cambia muy rápido entre los dos, el LED o el motor «ven» un valor intermedio. Eso es el <b>PWM</b> (modulación por ancho de pulsos): se mantiene una frecuencia fija y se cambia la proporción de tiempo en que la señal está a 1, que se llama <b>ciclo de trabajo</b>.</p>
+    <p>El montaje es el mismo del LED: módulo en IO25 (D3), con G-V-S.</p>
+    <figure class="fig"><img src="img/prog_s1_pwm.png" alt="Programa: escribe en el pin 25 los valores PWM 0, 64, 128 y 255, con 1000 ms de espera entre cada uno"><figcaption>Cuatro niveles de brillo, uno cada segundo. El bloque se llama «Escribir analógica (PWM)».</figcaption></figure>
+    <table class="t"><tr><th>Valor del bloque</th><th>Ciclo de trabajo</th><th>Efecto en un LED</th></tr><tr><td>0</td><td>0 %</td><td>Apagado</td></tr><tr><td>64</td><td>25 %</td><td>Brillo bajo</td></tr><tr><td>128</td><td>50 %</td><td>Brillo medio</td></tr><tr><td>255</td><td>100 %</td><td>Brillo máximo</td></tr></table>
+    <p>En este editor el valor va <b>de 0 a 255</b> (en el código generado aparece como <code>analogWrite(25, valor)</code>). Por eso, cuando mapeas una lectura analógica de 0–4095 para sacarla por PWM, el rango de salida es 0–255.</p>
+    <div class="note info"><b>Dos aplicaciones.</b> En un LED, el PWM regula el brillo: el ojo percibe más cambio con valores bajos que con altos, así que la escala no se nota lineal. En un motor de corriente continua, regula la velocidad: es el mismo principio, pero con el driver del apartado anterior; en clase lo vemos con el profesor.</div>
+    <details class="paso"><summary>🛠️ Montaje y puesta en marcha</summary><div class="in"><ol class="steps"><li>Conecta el módulo LED a IO25 (D3), con G-V-S.</li><li>Sube el programa y observa los cuatro niveles.</li><li>Cambia los valores y la espera, y comprueba qué ocurre con 10, 30 y 200.</li></ol></div></details>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🔁</span> Retos</h3>
+<div class="retos"><div class="reto b"><div class="tag">Básico</div><h4>Semáforo de dos</h4><p>Con dos LED, enciende uno y apaga el otro cada segundo, de forma alterna. Dibuja el diagrama de tiempos.</p></div><div class="reto m"><div class="tag">Medio</div><h4>Respiración</h4><p>Haz que el brillo del LED suba despacio de 0 a 255 y baje de nuevo. Una pista: usa un bucle «contar con» o una variable.</p></div><div class="reto p"><div class="tag">Pro</div><h4>Melodía mínima</h4><p>Con el zumbador pasivo, toca una secuencia de cuatro notas. Decide las frecuencias y justifica el orden.</p></div></div><p class="small">Conserva en el porfolio: foto del montaje, programa del reto y la tabla valor-brillo que has comprobado.</p>
+  </div><div class="card quiz" data-id="n1b">
+    <h3 class="sec-title"><span class="ico">✅</span> Comprueba lo que has aprendido</h3>
+    <div class="q" data-ans="a" data-why="El rango del bloque va de 0 a 255, así que el 50 % es 128 (aproximadamente)." data-hint="Recuerda el rango completo del bloque.">
+      <p>1. Quieres que un LED luzca a media potencia. ¿Qué valor escribes con el bloque PWM de este editor?</p>
+      <label><input type="radio" name="n1bq1" value="a"> 128, la mitad del rango.</label>
+      <label><input type="radio" name="n1bq1" value="b"> 50, porque es el 50 %.</label>
+      <label><input type="radio" name="n1bq1" value="c"> 1, el valor digital.</label>
+    </div>
+    <div class="q" data-ans="b" data-why="El pasivo no tiene oscilador; necesita que la placa le dé una frecuencia." data-hint="El activo suena continuo; el otro no.">
+      <p>2. Pruebas un zumbador con un 1 y solo hace un chasquido. ¿De qué tipo es?</p>
+      <label><input type="radio" name="n1bq2" value="a"> Activo.</label>
+      <label><input type="radio" name="n1bq2" value="b"> Pasivo, porque necesita una señal con frecuencia.</label>
+      <label><input type="radio" name="n1bq2" value="c"> Está roto sin remedio.</label>
+    </div>
+    <div class="q" data-ans="a" data-why="Se maneja con un driver que alimenta al motor desde una fuente adecuada." data-hint="Piensa en la corriente del arranque.">
+      <p>3. ¿Por qué un motor de corriente continua no se conecta directo a un pin?</p>
+      <label><input type="radio" name="n1bq3" value="a"> Porque el pin entrega muy poca corriente y el motor necesita más.</label>
+      <label><input type="radio" name="n1bq3" value="b"> Porque los pines solo sirven para sensores.</label>
+      <label><input type="radio" name="n1bq3" value="c"> Porque el motor no admite señales digitales.</label>
+    </div>
+  </div>
+</section>
+
+<div class="pager"><a href="n1.html">← N1 · Digital</a><a href="n2.html">N2 · Analógico →</a></div>
+</main>
+<footer>
+  <div class="wrap">
+    <p>Material de <b>Robótica y Fabricación Digital II</b> · IES Murillo (Sevilla). Autor: Juan Antonio Pérez Rodríguez.
+    Textos, programas y código bajo licencia <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">CC BY-NC-SA 4.0</a>.</p>
+  </div>
+</footer>
+<script src="assets/app.js?v=890831c4"></script>
+</body>
+</html>

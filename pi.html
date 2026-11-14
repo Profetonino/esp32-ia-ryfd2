@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PI · Prácticas integradas con sensores y actuadores · RyFD II</title>
+<link rel="stylesheet" href="assets/estilos.css?v=890831c4">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">Robótica y Fabricación Digital II · 2.º Bachillerato · IES Murillo</div>
+    <h1>De la ESP32 a la IA</h1>
+    <p class="sub">Repaso de sensores, actuadores, servidor web y ESP-NOW con la ESP32 STEAMakers, y prácticas con la ESP32 STEAMakers AI.</p>
+  </div>
+</header>
+<nav class="menu" aria-label="Secciones">
+  <div class="wrap" id="menu">
+    <a href="index.html">Inicio</a>
+    <a href="seguridad.html">Antes de enchufar</a>
+    <a href="n0.html">N0 · Tu placa</a>
+    <a href="n1.html">N1 · Digital</a>
+    <a href="n1b.html">N1b · Salidas y PWM</a>
+    <a href="n2.html">N2 · Analógico</a>
+    <a href="n2b.html">N2b · I2C y especiales</a>
+    <a href="pi.html" class="on" aria-current="page">PI · Sensores + actuadores</a>
+    <a href="n3.html">N3 · Servidor web</a>
+    <a href="n4.html">N4 · ESP-NOW</a>
+    <span class="soon" title="Próximamente">N5 · Placa AI</span>
+    <span class="soon" title="Próximamente">N6 · Agentes con IA</span>
+    <span class="soon" title="Próximamente">Reto final</span>
+  </div>
+</nav>
+
+<main>
+<section class="page" id="pi">
+  <h2 class="lvl"><span class="badge">PI</span> Sensores + actuadores</h2>
+  <p class="lead">Después del repaso toca construir. En estas prácticas combinas varios sensores y actuadores, guardas estados en variables, calibras con medidas y decides con umbrales. Son las que más se parecen a un proyecto real y las que mejor preparan para el servidor web, ESP-NOW y la placa con IA.</p>
+  <div class="row"><span class="pill">⏱️ 3–4 sesiones</span><span class="pill">3 prácticas + I2C</span><span class="pill">Esquema → programa → reto</span></div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🧭</span> Cómo se trabaja</h3>
+
+    <p>Aquí unes lo que has repasado: sensores que miden, actuadores que responden y un programa que decide. Cada práctica tiene una <b>situación</b>, un <b>esquema</b>, un <b>programa de partida</b> y <b>retos</b> en tres niveles. El programa de partida funciona, pero deja decisiones abiertas (umbrales, tiempos) que tienes que ajustar con medidas de tu montaje.</p>
+    <ol class="steps"><li>Lee la situación y escribe en el porfolio qué entradas y qué salidas necesita, antes de coger ningún cable.</li><li>Monta siguiendo el esquema y pide revisión por otra persona con la <a href="seguridad.html">lista de comprobación</a>.</li><li>Sube el programa de partida y comprueba cada parte por separado.</li><li>Ajusta los umbrales con medidas reales y anota los valores.</li><li>Resuelve los retos, de menor a mayor nivel.</li></ol>
+    <div class="note info"><b>Si no tienes un módulo,</b> coge otro parecido. Si tu grupo tiene dos placas, uno monta y otro revisa, y cambiáis.</div>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🌱</span> PI1 · Aviso de riego</h3>
+
+    <p class="meta"><b>Situación.</b> Una maceta tiene que avisar cuando le falta agua: el LED verde indica que todo va bien, el rojo y el zumbador indican que hay que regar.</p>
+    <h4>1 · Esquema de conexiones</h4>
+    <figure class="fig"><img src="img/d_pi1.png" alt="Esquema de conexiones de PI1 · Aviso de riego"><figcaption>Esquema de PI1 · Aviso de riego. Todos los módulos se conectan en G-V-S.</figcaption></figure>
+    <table class="t"><tr><th>Módulo</th><th>Pin de señal</th></tr><tr><td>Sonda de humedad de suelo</td><td>IO35 (A2)</td></tr><tr><td>LED rojo</td><td>IO17 (D4)</td></tr><tr><td>LED verde</td><td>IO16 (D5)</td></tr><tr><td>Zumbador activo</td><td>IO27 (D6)</td></tr></table>
+    <h4>2 · Programa de partida</h4>
+    <figure class="fig"><img src="img/prog_pi1.png" alt="Programa de bloques de PI1 · Aviso de riego"><figcaption>Programa de partida.</figcaption></figure>
+    <p>Se guarda la humedad en una variable, se compara con el umbral (30 %) y se actúa sobre tres salidas a la vez. El valor se envía por el puerto serie para calibrar. <b>El 30 % es un valor de ejemplo</b>: tu sonda y tu tierra darán otros, y por eso hay que medir.</p>
+    <h4>3 · Retos</h4>
+    <div class="retos"><div class="reto b"><div class="tag">Básico</div><h4>Dos umbrales</h4><p>Añade un estado intermedio: por debajo del 20 % suena el zumbador; entre el 20 y el 40 % solo se enciende el LED rojo.</p></div><div class="reto m"><div class="tag">Medio</div><h4>Histéresis</h4><p>Enciende la alarma por debajo del 30 % y no la apagues hasta superar el 40 %.</p></div><div class="reto p"><div class="tag">Pro</div><h4>Calibración propia</h4><p>Mide aire, tierra seca y tierra mojada y usa mapear y limitar para obtener un porcentaje propio. Calcula la media de 10 lecturas.</p></div></div>
+    <p class="small"><b>Entrega en el porfolio:</b> foto del montaje, tabla de medidas (aire, seco, mojado), umbral elegido y justificación, programa del reto.</p>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🚨</span> PI2 · Alarma de presencia</h3>
+
+    <p class="meta"><b>Situación.</b> Una alarma que se arma y desarma con un pulsador: cuando está armada, el PIR detecta movimiento y suena el zumbador. El LED indica si está armada.</p>
+    <h4>1 · Esquema de conexiones</h4>
+    <figure class="fig"><img src="img/d_pi2.png" alt="Esquema de conexiones de PI2 · Alarma de presencia"><figcaption>Esquema de PI2 · Alarma de presencia. Todos los módulos se conectan en G-V-S.</figcaption></figure>
+    <table class="t"><tr><th>Módulo</th><th>Pin de señal</th></tr><tr><td>Pulsador</td><td>IO26 (D2)</td></tr><tr><td>Sensor PIR</td><td>IO14 (D7)</td></tr><tr><td>LED</td><td>IO17 (D4)</td></tr><tr><td>Zumbador activo</td><td>IO27 (D6)</td></tr></table>
+    <h4>2 · Programa de partida</h4>
+    <figure class="fig"><img src="img/prog_pi2.png" alt="Programa de bloques de PI2 · Alarma de presencia"><figcaption>Programa de partida.</figcaption></figure>
+    <p>La variable <b>armada</b> guarda el estado (0 o 1). Cada pulsación lo invierte con 1 − armada. La alarma solo suena si armada vale 1 <b>y</b> el PIR detecta movimiento. Fíjate en el bloque «se ha pulsado»: sin él, una pulsación larga armaría y desarmaría muchas veces.</p>
+    <h4>3 · Retos</h4>
+    <div class="retos"><div class="reto b"><div class="tag">Básico</div><h4>Tiempo de alarma</h4><p>Haz que, tras detectar movimiento, el zumbador suene exactamente 3 segundos.</p></div><div class="reto m"><div class="tag">Medio</div><h4>Armado con retardo</h4><p>Al armar, espera 10 segundos antes de vigilar y muestra la cuenta atrás por el puerto serie.</p></div><div class="reto p"><div class="tag">Pro</div><h4>Memoria de intrusión</h4><p>La alarma sigue sonando después de que el intruso se vaya, hasta que se desarme. Cuenta cuántas intrusiones ha habido.</p></div></div>
+    <p class="small"><b>Entrega en el porfolio:</b> foto del montaje, diagrama de estados (armada / desarmada) dibujado a mano y programa del reto.</p>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🌙</span> PI3 · Luz de noche</h3>
+
+    <p class="meta"><b>Situación.</b> Una luz que se enciende sola cuando oscurece: cuanta menos luz haya en la habitación, más brilla el LED.</p>
+    <h4>1 · Esquema de conexiones</h4>
+    <figure class="fig"><img src="img/d_pi3.png" alt="Esquema de conexiones de PI3 · Luz de noche"><figcaption>Esquema de PI3 · Luz de noche. Todos los módulos se conectan en G-V-S.</figcaption></figure>
+    <table class="t"><tr><th>Módulo</th><th>Pin de señal</th></tr><tr><td>Fotorresistencia (LDR)</td><td>IO34 (A3)</td></tr><tr><td>LED</td><td>IO17 (D4)</td></tr></table>
+    <h4>2 · Programa de partida</h4>
+    <figure class="fig"><img src="img/prog_pi3.png" alt="Programa de bloques de PI3 · Luz de noche"><figcaption>Programa de partida.</figcaption></figure>
+    <p>Se mide la luz en porcentaje y se mapea de forma <b>inversa</b> (0–100 a 255–0): menos luz, más brillo. Observa que el mapeo no cambia de sentido por casualidad: se invierte poniendo el rango de salida al revés.</p>
+    <h4>3 · Retos</h4>
+    <div class="retos"><div class="reto b"><div class="tag">Básico</div><h4>Más luz, más brillo</h4><p>Invierte el comportamiento y comprueba qué ocurre.</p></div><div class="reto m"><div class="tag">Medio</div><h4>Solo de noche</h4><p>El LED solo se enciende por debajo del 30 % de luz y se apaga por completo por encima, con histéresis.</p></div><div class="reto p"><div class="tag">Pro</div><h4>Automático o manual</h4><p>Un pulsador cambia entre modo automático y modo manual, y en manual un potenciómetro fija el brillo.</p></div></div>
+    <p class="small"><b>Entrega en el porfolio:</b> foto del montaje, rango medido de tu LDR (tapada y con luz), programa del reto y una explicación del mapeo que has usado.</p>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🖥️</span> Sensores I2C y pantallas</h3>
+
+    <p>El siguiente paso son los sensores y las pantallas que se conectan por <b>I2C</b>: dos hilos de datos (SDA y SCL) más alimentación, y un bus que permite varios dispositivos a la vez. La placa tiene un bloque de conectores I2C con GND, V, SDA y SCL, y el editor tiene bloques de <b>Visualización</b> para pantallas OLED y LCD.</p>
+    <p>En el taller hay sensores de CO₂ y de pulso, y pantallas OLED y LCD. Las prácticas se plantearán igual que las anteriores: <b>medir</b> (CO₂ o pulso), <b>mostrar</b> en la pantalla y <b>avisar</b> con LED o zumbador al pasar un umbral.</p>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">✅</span> Evaluación</h3>
+
+    <p>Cada práctica se valora con la misma rúbrica. Los niveles describen lo que el alumno hace, no cuánto se equivoca, y cualquier formato de evidencia es válido si muestra lo pedido: foto, vídeo corto, esquema a mano o explicación oral.</p>
+    <table class="t"><tr><th>Criterio</th><th>Iniciado</th><th>En proceso</th><th>Logrado</th><th>Destacado</th></tr><tr><td>Montaje</td><td>Necesita ayuda para cablear.</td><td>Monta con el esquema y corrige errores con ayuda.</td><td>Monta sin errores y lo revisa con la lista.</td><td>Monta, revisa a otros y documenta mejoras.</td></tr><tr><td>Programa</td><td>El programa de partida funciona con ayuda.</td><td>Sube y modifica el programa de partida.</td><td>Resuelve el reto básico y el medio.</td><td>Resuelve el reto pro y explica su programa.</td></tr><tr><td>Medidas y ajuste</td><td>Copia los valores del ejemplo.</td><td>Mide, pero no ajusta el programa.</td><td>Ajusta umbrales con sus medidas.</td><td>Justifica sus umbrales y valida con pruebas repetidas.</td></tr><tr><td>Porfolio</td><td>Entrega incompleto.</td><td>Entrega las evidencias básicas.</td><td>Entrega todo y explica.</td><td>Entrega todo, analiza fallos y propone mejoras.</td></tr><tr><td>Trabajo en grupo</td><td>Participa si se le pide.</td><td>Cumple su tarea.</td><td>Reparte tareas y revisa a sus compañeros.</td><td>Coordina y ayuda a otros grupos.</td></tr></table>
+    <p class="small">Los criterios de evaluación concretos de la programación didáctica se vincularán a esta rúbrica cuando estén cerrados.</p>
+  </div>
+</section>
+
+<div class="pager"><a href="n2b.html">← N2b · I2C y especiales</a><a href="n3.html">N3 · Servidor web →</a></div>
+</main>
+<footer>
+  <div class="wrap">
+    <p>Material de <b>Robótica y Fabricación Digital II</b> · IES Murillo (Sevilla). Autor: Juan Antonio Pérez Rodríguez.
+    Textos, programas y código bajo licencia <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">CC BY-NC-SA 4.0</a>.</p>
+  </div>
+</footer>
+<script src="assets/app.js?v=890831c4"></script>
+</body>
+</html>

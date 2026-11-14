@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>N3 · La placa como servidor web · RyFD II</title>
+<link rel="stylesheet" href="assets/estilos.css?v=890831c4">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">Robótica y Fabricación Digital II · 2.º Bachillerato · IES Murillo</div>
+    <h1>De la ESP32 a la IA</h1>
+    <p class="sub">Repaso de sensores, actuadores, servidor web y ESP-NOW con la ESP32 STEAMakers, y prácticas con la ESP32 STEAMakers AI.</p>
+  </div>
+</header>
+<nav class="menu" aria-label="Secciones">
+  <div class="wrap" id="menu">
+    <a href="index.html">Inicio</a>
+    <a href="seguridad.html">Antes de enchufar</a>
+    <a href="n0.html">N0 · Tu placa</a>
+    <a href="n1.html">N1 · Digital</a>
+    <a href="n1b.html">N1b · Salidas y PWM</a>
+    <a href="n2.html">N2 · Analógico</a>
+    <a href="n2b.html">N2b · I2C y especiales</a>
+    <a href="pi.html">PI · Sensores + actuadores</a>
+    <a href="n3.html" class="on" aria-current="page">N3 · Servidor web</a>
+    <a href="n4.html">N4 · ESP-NOW</a>
+    <span class="soon" title="Próximamente">N5 · Placa AI</span>
+    <span class="soon" title="Próximamente">N6 · Agentes con IA</span>
+    <span class="soon" title="Próximamente">Reto final</span>
+  </div>
+</nav>
+
+<main>
+<section class="page" id="n3">
+  <h2 class="lvl"><span class="badge">N3</span> La placa como servidor web</h2>
+  <p class="lead">Tu placa se conecta a la red del centro y se convierte en una pequeña página web: cualquier equipo puede abrirla y ver la temperatura y la humedad que mide un sensor DHT11, y también mandarle una orden. Es la base del internet de las cosas y el primer momento del curso en que tu montaje es visible para otras personas.</p>
+  <div class="row"><span class="pill">⏱️ 3 sesiones</span><span class="pill">Sensor DHT11</span><span class="pill">Esquema → programa → reto</span></div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🧠</span> Cómo funciona</h3>
+
+    <p>Hasta ahora has visto lo que hace tu placa desde el ordenador al que está enchufada. Aquí la placa se conecta a la red del centro y se convierte en una pequeña página web: cualquier equipo de esa red puede abrirla y ver la <b>temperatura y la humedad</b> que mide un sensor DHT11.</p>
+    <p>Cuando escribes una dirección en el navegador, tu equipo (el <b>cliente</b>) pide una página a otro equipo (el <b>servidor</b>), que le contesta con el contenido. Tu placa hace de servidor: espera peticiones y, cuando llega una, mide en ese momento y devuelve una página con el dato. Para encontrarla necesitas su dirección <b>IP</b>, que la red le asigna al conectarse.</p>
+    {fig('d_n3_viaje','Recorrido de una página: el ordenador la pide, la red la lleva a la placa, la placa la fabrica y la devuelve','Cliente y servidor: cinco pasos desde que escribes la IP hasta que ves la página.')}
+    <p><b>Importante:</b> la página <u>no está guardada</u> en tu ordenador ni en Internet. Está en la placa, que la construye con los datos del sensor cada vez que alguien la pide. Si desenchufas la placa, la página desaparece.</p>
+    <p>Cada placa tiene además una dirección <b>MAC</b>, un identificador de fábrica que no cambia. La red del centro admite solo las MAC que el profesor ha dado de alta, y por eso lo primero que haréis es leer la de vuestra placa.</p>
+    <div class="note info"><b>Dos cosas a tener en cuenta.</b> El equipo que abre la página debe estar en la misma red que la placa. Y con la Wi-Fi activada la placa consume más: si se reinicia sola o la página se cuelga, cambia de cable o de puerto USB antes de culpar al programa.</div>
+    <h4>Objetivos</h4>
+    <ul><li>Conectar la placa a la red y averiguar su MAC y su IP.</li><li>Explicar qué hacen un cliente y un servidor al abrir una página.</li><li>Publicar la temperatura y la humedad de un DHT11 en el navegador.</li><li>Controlar una salida desde el navegador y razonar qué riesgos tiene dejar una placa visible.</li></ul>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">📡</span> P1 · Conectar y presentarte</h3>
+
+    <p>Sin montar nada más: conecta la placa y lee su MAC y su IP. Lo harás en dos programas muy cortos.</p>
+    <h4>1 · Averigua la MAC</h4>
+    <figure class="fig"><img src="img/prog_n3_mac.png" alt="Programa que inicia el puerto serie y envía la MAC de la placa"><figcaption>Programa 1: la consola muestra la MAC. Anótala y entrégasela al profesor.</figcaption></figure>
+    <p>El bloque está en la categoría <b>ESP</b> y se llama «ESP WiFi MAC (texto)». Cuando el profesor confirme que está dada de alta, pasa al segundo programa.</p>
+    <h4>2 · Conéctate y muestra la IP</h4>
+    <figure class="fig"><img src="img/prog_n3_ip.png" alt="Programa que conecta a la red Wi-Fi y envía la dirección IP cada dos segundos"><figcaption>Programa 2: conecta a la red y envía la IP por la consola.</figcaption></figure>
+    <p>El bloque «Conectar a WiFi» tiene dos casillas: el nombre de la red (SSID) y la clave. Escribe los que te dé el profesor.</p>
+    <div class="note warn"><b>La clave no va al porfolio.</b> Al hacer capturas, tápala o cambia el texto por «xxxx»: quien la tenga puede conectarse a la red del centro.</div>
+    <h4>Si no conecta, repasa por orden</h4>
+    <ul class="checklist"><li><label><input type="checkbox"> ¿La MAC está dada de alta?</label></li><li><label><input type="checkbox"> ¿El nombre de la red y la clave están bien escritos?</label></li><li><label><input type="checkbox"> ¿El cable USB da suficiente tensión? Prueba con otro cable o puerto.</label></li><li><label><input type="checkbox"> ¿Estás a tu alcance de la señal de la red?</label></li></ul><p class="cl-count small"></p>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🌐</span> Cómo ver la web que vive en tu placa</h3>
+
+    <p>Este es el paso en el que más grupos se pierden, así que ve despacio. Cuando la placa está conectada y el servidor iniciado, la página <b>ya existe</b>, pero no aparece sola en ninguna parte: tienes que ir a buscarla con un navegador (Chrome, Firefox, Edge…) escribiendo la dirección de la placa.</p>
+    <h4>Dos ventanas, dos trabajos</h4>
+    <figure class="fig"><img src="img/d_n3_ver.png" alt="La consola del editor muestra la IP de la placa; el navegador, escribiendo esa IP, muestra la página"><figcaption>La consola te da la dirección (①). El navegador, en otra pestaña, te enseña la página (②).</figcaption></figure>
+    <table class="t"><tr><th>Ventana</th><th>Dónde está</th><th>Qué ves</th><th>Para qué sirve</th></tr><tr><td>Consola</td><td>En el editor de bloques, junto al programa</td><td>Texto que envía la placa, por ejemplo «IP: 192.168.1.57»</td><td>Saber qué dirección tiene tu placa y comprobar que se ha conectado</td></tr><tr><td>Navegador</td><td>Una pestaña nueva, en un equipo de la misma red</td><td>La página: título, temperatura y humedad</td><td>Ver y usar lo que publica la placa</td></tr></table>
+    <h4>Paso a paso</h4>
+    <ol class="steps"><li>Sube a la placa el programa que muestra la IP (el programa 2 de arriba o el de P2) y abre la <b>Consola</b>.</li><li>Espera unos segundos. Mientras la placa se conecta puede salir «0.0.0.0»; cuando se conecte aparecerán <b>cuatro números separados por puntos</b>, por ejemplo <code>192.168.1.57</code>. Esa es tu IP.</li><li>Abre una <b>pestaña nueva</b> del navegador en un equipo que esté en la <b>misma red</b> que la placa.</li><li>Haz clic en la barra de direcciones y escribe <code>http://</code> seguido de la IP: <code>http://192.168.1.57</code>. Pulsa Intro.</li><li>Debe aparecer tu página. Para ver una medida nueva, <b>recarga</b> la página (tecla F5): la placa vuelve a medir y fabrica otra.</li><li>Anota la IP en tu porfolio: la necesitarás en P3. Si reinicias la placa, la red puede darle otra, así que vuelve a leerla en la consola.</li></ol>
+    <div class="note warn"><b>Tres errores muy típicos.</b> (1) Escribir solo los números sin «http://»: algunos navegadores lo buscan en Google en lugar de abrirlo. (2) Escribir «https://»: la placa no cifra, así que da error de conexión segura. (3) Usar un equipo que no está en la misma red, por ejemplo un móvil con datos móviles: la placa no es alcanzable desde fuera.</div>
+    <div class="note info"><b>Aviso «No seguro».</b> Al abrir la página, el navegador puede avisar de que la conexión no es segura. Es normal: la placa envía los datos sin cifrar. Para una estación del aula no importa; para una contraseña sí importaría.</div>
+    <h4>Si no aparece nada</h4>
+    <table class="t"><tr><th>Lo que ves</th><th>Causa probable</th><th>Qué hacer</th></tr><tr><td>«No se puede acceder a este sitio» o tarda mucho</td><td>El equipo no está en la misma red, la placa no está conectada o la IP está mal copiada</td><td>Comprueba la red del equipo, mira la consola y copia la IP otra vez con cuidado</td></tr><tr><td>Aparece una página de resultados de Google</td><td>Falta «http://» al principio</td><td>Escríbelo delante de la IP</td></tr><tr><td>Error de conexión segura</td><td>Has escrito «https://»</td><td>Cámbialo por «http://»</td></tr><tr><td>La página sale, pero sin números o con valores raros</td><td>El DHT11 está mal conectado o se lee demasiado deprisa</td><td>Revisa G, V y S (S a IO26) y espera un segundo entre recargas</td></tr><tr><td>Funcionaba y ya no</td><td>La placa se ha reiniciado y tiene otra IP, o ha perdido tensión</td><td>Lee la IP de nuevo en la consola; prueba otro cable USB</td></tr></table>
+    <h4>Compruébalo tú mismo</h4>
+    <p>Dos pruebas rápidas para entender dónde está la página. <b>Prueba 1:</b> con la página abierta, desenchufa la placa y recarga. ¿Qué ocurre y por qué? <b>Prueba 2:</b> en la página abierta pulsa Ctrl+U (ver código fuente): verás el texto con etiquetas que fabricó la placa; el navegador es quien lo convierte en título y párrafos.</p>
+    
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🌡️</span> P2 · Temperatura y humedad en el navegador</h3>
+
+    <p><b>Situación.</b> El aula quiere una estación meteorológica sencilla: cualquiera de la red del centro debe poder ver la temperatura y la humedad de la clase con solo escribir la IP de la placa.</p>
+    <h4>1 · Esquema de conexiones</h4>
+    <p>El DHT11 es un módulo de tres pines que se monta como los del nivel N1 (G-V-S); la señal va a IO26 (D2). Ojo: no entrega un simple 0 o 1, sino que envía los datos por un solo hilo con un protocolo propio; el bloque «DHT-11» del editor se encarga de leerlo.</p>
+    <figure class="fig"><img src="img/modulo_dht11.jpg" alt="Foto del módulo DHT11 de ACEBOTT con las patillas rotuladas G, V y S" style="max-width:340px"><figcaption>Módulo DHT11 (ACEBOTT). Las tres patillas están rotuladas G, V y S, en este orden: comprueba siempre el orden de tu módulo antes de conectarlo.</figcaption></figure>
+    <figure class="fig"><img src="img/d_n3_dht.png" alt="Montaje del módulo DHT11 en IO26"><figcaption>Módulo DHT11: G a GND, V a V y S a IO26 (D2).</figcaption></figure>
+    <details class="paso"><summary>🛠️ Montaje y puesta en marcha</summary><div class="in"><ol class="steps"><li>Con la placa desenchufada, conecta G, V y S del DHT11 como en el esquema. Revisa con la <a href="seguridad.html">lista de comprobación</a>.</li><li>Conecta la placa por USB y construye el programa de abajo con tu nombre de red y tu clave.</li><li>Pulsa <b>Subir</b> y abre la <b>Consola</b>: debe aparecer la IP.</li><li>En un ordenador de la misma red, abre una pestaña nueva y escribe <code>http://</code> y esa IP (mira la tarjeta «Cómo ver la web que vive en tu placa»).</li><li>Sopla sobre el sensor o tápalo con la mano y recarga la página: los valores deben cambiar.</li></ol></div></details>
+    <h4>2 · Programa</h4>
+    <figure class="fig"><img src="img/prog_n3_dht.png" alt="Programa: conectar, iniciar el servidor y responder con la temperatura y la humedad del DHT11"><figcaption>Programa de partida. A la izquierda, lo que se hace una vez; a la derecha, lo que se hace cada vez que alguien pide la página.</figcaption></figure>
+    <p>Fíjate en la forma del programa: el <b>bucle está vacío</b>. El editor atiende el servidor por su cuenta; lo único que escribes es qué contestar cuando llega una petición «GET /» (la dirección raíz). La respuesta es un texto con etiquetas HTML en el que se mezclan frases fijas y las dos lecturas del sensor.</p>
+    <div class="note info"><b>Los límites del DHT11.</b> Es un sensor barato. Según su hoja de datos mide la temperatura de 0 a 50 °C con una precisión de ±2 °C, y la humedad de 20 a 90 % con una precisión de ±5 %, y el tiempo entre dos lecturas debe ser de al menos un segundo. Si recargas la página muy deprisa, puede devolver el valor anterior o fallar. No lo uses para decidir nada crítico.</div>
+    <h4>3 · Retos</h4>
+    <div class="retos"><div class="reto b"><div class="tag">Básico</div><h4>Título y grupo</h4><p>Añade un título con el nombre de tu grupo y escribe «Temperatura» y «Humedad» en una etiqueta de párrafo cada una, para que la página se vea ordenada.</p></div><div class="reto m"><div class="tag">Medio</div><h4>Se actualiza sola</h4><p>Haz que la página se recargue cada pocos segundos sin pulsar nada. Pista: existe una etiqueta HTML «meta» con la opción «refresh» que se escribe en el texto de la respuesta.</p></div><div class="reto p"><div class="tag">Pro</div><h4>Aviso de confort</h4><p>Añade al texto una frase que cambie según la medida: «Hace calor» por encima de un umbral y «Temperatura agradable» por debajo. Razona qué umbral eliges y comprueba con tu sensor si falla por culpa de la precisión.</p></div></div>
+    <p class="small"><b>Entrega en el porfolio:</b> foto del montaje, captura de la página en el navegador (sin la clave), las dos lecturas con el sensor al aire y tapado, y el programa del reto.</p>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">☁️</span> Ampliación · Tu estación en la nube con Paneles IoT</h3>
+
+    <p>El servidor web de P2 solo se ve desde la red del centro. Con los <b>Paneles IoT</b> de STEAMakersBlocks, la placa manda sus medidas por internet y las ves en un panel con gráficas desde cualquier dispositivo. Es una ampliación opcional.</p>
+    <div class="note warn"><b>Antes de empezar.</b> Hace falta una cuenta <b>premium</b> de STEAMakersBlocks. Los datos pasan por un servidor público de pruebas (HiveMQ), <b>sin contraseña y sin cifrar</b>: no envíes nada personal ni que identifique a nadie. Y no se ha probado todavía en «AndaRed IoT»: puede que el centro bloquee este tipo de conexión (el puerto MQTT). Consúltalo con el profesor antes de planificar la sesión.</div>
+    <h4>Qué es un panel</h4>
+    <p>Un panel es una página con <b>componentes</b>: números, gráficos, indicadores, semicírculos, interruptores y deslizadores, entre otros. Cada componente tiene un «tema» (una dirección del tipo <code>/smb/80/426/</code>) en el que la placa publica su valor. Los números del ejemplo son de muestra: los tuyos los genera el panel.</p>
+    <h4>Pasos</h4>
+    <ol class="steps"><li>En STEAMakersBlocks, abre Utilidades → Paneles IoT y crea un panel nuevo, con título y subtítulo.</li><li>En el servidor, pulsa «Use HiveMQ» y acepta el aviso: los campos de conexión se rellenan solos.</li><li>Crea dos componentes: un <b>Gráfico</b> para la temperatura y un <b>Número</b> (o un semicírculo) para la humedad. Anota el tema de cada uno.</li><li>En tu proyecto, conecta la placa a la Wi-Fi, inicia MQTT y publica cada medida en el tema de su componente. El panel permite copiar los bloques de inicio y de publicar y pegarlos en el proyecto desde el menú Utilidades.</li><li>Sube el programa a la placa, pulsa «Run panel» y comprueba que la gráfica se mueve.</li></ol>
+    <figure class="fig"><img src="img/prog_n3_panel.png" alt="Programa que conecta a la Wi-Fi, inicia MQTT con HiveMQ y publica la temperatura y la humedad del DHT11 cada cinco segundos"><figcaption>Programa de partida. Cambia los temas del ejemplo por los de tu panel y el nombre y la clave de la red por los tuyos.</figcaption></figure>
+    <p>Se publica cada cinco segundos: el DHT11 no necesita más, y así no se satura el servidor. Fíjate en que el valor se publica como texto, igual que en ESP-NOW. El componente Número o Gráfico debería mostrarlo como número, pero el manual no lo detalla: compruébalo en tu panel.</p>
+    <div class="note info"><b>Pendiente de comprobar.</b> Los bloques MQTT del programa existen en el editor y generan código correcto, pero esta práctica no se ha probado con un panel real ni con la red del centro. El manual de los paneles no indica un límite de frecuencia de envío.</div>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">💡</span> P3 · Controlar desde la web</h3>
+
+    <p>Ahora el camino es el contrario: tú pulsas en el navegador y la placa actúa. Añade un módulo LED en IO17 (D4) y deja el montaje del DHT11 como está, o desmóntalo si necesitas el pin.</p>
+    <figure class="fig"><img src="img/d_n3_led.png" alt="Montaje del módulo LED en IO17"><figcaption>Módulo LED: G a GND, V a V y S a IO17 (D4).</figcaption></figure>
+    <h4>Programa</h4>
+    <figure class="fig"><img src="img/prog_n3_led.png" alt="Programa con dos solicitudes: la dirección /on enciende el LED y /off lo apaga"><figcaption>Dos «Solicitud GET»: cada dirección enciende o apaga el LED y contesta con un texto.</figcaption></figure>
+    <p>Cada solicitud tiene su <b>dirección</b>: el bloque antepone él solo la barra «/», así que en la casilla escribes solo <code>on</code> u <code>off</code>. Para probar, abre en el navegador <code>http://IP/on</code> y <code>http://IP/off</code> (cambia IP por la de tu placa) y comprueba en la consola qué le llega.</p>
+    <h4>Retos</h4>
+    <div class="retos"><div class="reto b"><div class="tag">Básico</div><h4>Una página con botones</h4><p>Que la respuesta sea una página con dos enlaces, «Encender» y «Apagar», que lleven a /on y /off.</p></div><div class="reto m"><div class="tag">Medio</div><h4>LED según la humedad</h4><p>Combina P2 y P3: enciende el LED cuando la humedad supere un umbral que elijas y muestra en la página si está encendido.</p></div><div class="reto p"><div class="tag">Pro</div><h4>¿Quién puede mandar?</h4><p>Tu página no pide ninguna clave. Escribe qué podría hacer alguien que conociera la IP de tu placa y diseña una medida sencilla para limitarlo, por ejemplo un código en la dirección. Razona por qué no es una protección fuerte.</p></div></div>
+  </div><div class="card">
+    <h3 class="sec-title"><span class="ico">🔒</span> Seguridad: lo que acabas de publicar</h3>
+    <p>Tu placa responde a cualquiera de la red que escriba su IP, y la comunicación no va cifrada: lo que se envía puede leerse en el camino. Para un zumbador del aula no es grave, pero conviene ser consciente de tres ideas que usarás de nuevo con la inteligencia artificial: <b>no publiques datos personales</b>, <b>no confíes en que una dirección poco conocida sea una protección</b> y <b>no compartas la clave de una red</b>.</p>
+  </div><div class="card">
+    <h3 class="sec-title"><span class="ico">📓</span> Qué anotar en el porfolio</h3>
+    <ul>
+      <li>La MAC y la IP de tu placa, y si cambia al reiniciar.</li>
+      <li>Captura de la página de la placa en el navegador (sin la clave de la red a la vista).</li>
+      <li>Qué fallos tuvisteis al conectar y cómo los localizasteis.</li>
+      <li>La respuesta al reto «¿quién puede mandar?».</li>
+    </ul>
+  </div>
+  <div class="card quiz" data-id="n3">
+    <h3 class="sec-title"><span class="ico">✅</span> Comprueba lo que has aprendido</h3>
+    <div class="q" data-ans="b" data-why="La placa espera peticiones y devuelve una página: es el servidor. El navegador del equipo que la abre es el cliente." data-hint="Quien pide la página es el cliente.">
+      <p>1. Abres en el ordenador la página de tu placa. ¿Quién es el servidor?</p>
+      <label><input type="radio" name="n3q1" value="a"> El ordenador.</label>
+      <label><input type="radio" name="n3q1" value="b"> La placa.</label>
+      <label><input type="radio" name="n3q1" value="c"> El cable USB.</label>
+    </div>
+    <div class="q" data-ans="c" data-why="El ordenador y la placa deben estar en la misma red para que la dirección IP de la placa sea alcanzable." data-hint="Piensa en qué red está cada uno.">
+      <p>2. Todo está bien en la placa, pero la página no abre desde tu equipo. ¿Qué compruebas primero?</p>
+      <label><input type="radio" name="n3q2" value="a"> Que el programa tenga más bloques.</label>
+      <label><input type="radio" name="n3q2" value="b"> Que el navegador sea el más moderno.</label>
+      <label><input type="radio" name="n3q2" value="c"> Que el equipo esté en la misma red que la placa.</label>
+    </div>
+    <div class="q" data-ans="a" data-why="La MAC identifica a la placa y es lo que la red del centro usa para dejarla pasar." data-hint="Piensa en qué tiene la placa que no cambia.">
+      <p>3. ¿Para qué hay que dar la MAC de la placa al profesor?</p>
+      <label><input type="radio" name="n3q3" value="a"> Para que la red del centro permita conectarla.</label>
+      <label><input type="radio" name="n3q3" value="b"> Para elegir el color del programa.</label>
+      <label><input type="radio" name="n3q3" value="c"> Para dar una clave a la placa.</label>
+    </div>
+    <div class="q" data-ans="b" data-why="La clave de la red es del centro. Si aparece en una captura, cualquiera puede conectarse." data-hint="Piensa en quién podría ver tu porfolio.">
+      <p>4. ¿Qué haces con la clave de la red al hacer la captura del porfolio?</p>
+      <label><input type="radio" name="n3q4" value="a"> Se deja visible para que se sepa cuál es.</label>
+      <label><input type="radio" name="n3q4" value="b"> Se tapa o se cambia por xxxx.</label>
+      <label><input type="radio" name="n3q4" value="c"> Se escribe en el título de la página.</label>
+    </div>
+    <div class="q" data-ans="c" data-why="La página no pide ninguna clave y la comunicación no va cifrada, así que cualquiera de la red que conozca la IP puede mandar órdenes." data-hint="Piensa en quién conoce la IP.">
+      <p>5. Tu placa controla un zumbador desde una página sin clave. ¿Qué es cierto?</p>
+      <label><input type="radio" name="n3q5" value="a"> Solo tú puedes verla, porque la IP es un secreto.</label>
+      <label><input type="radio" name="n3q5" value="b"> Está cifrada por defecto.</label>
+      <label><input type="radio" name="n3q5" value="c"> Cualquiera de la misma red que sepa la IP puede mandarle órdenes.</label>
+    </div>
+        <div class="q" data-ans="b" data-why="El DHT11 es un sensor básico: precisión aproximada de ±2 °C y no admite lecturas más de una vez por segundo, así que conviene no pedirle más de lo que da." data-hint="Piensa en qué tipo de sensor es y para qué sirve.">
+      <p>6. Tu página muestra 24 °C y un termómetro de referencia marca 26 °C. ¿Qué conclusión es más razonable?</p>
+      <label><input type="radio" name="n3q6" value="a"> Tu programa está mal escrito.</label>
+      <label><input type="radio" name="n3q6" value="b"> Entra dentro de la precisión esperable de un DHT11.</label>
+      <label><input type="radio" name="n3q6" value="c"> La placa está averiada.</label>
+    </div>
+    <div class="q" data-ans="c" data-why="La página la fabrica la placa cada vez que se le pide. No se guarda en el ordenador ni en Internet, y desaparece si la placa se apaga." data-hint="Piensa en quién construye el texto que recibe el navegador.">
+      <p>7. ¿Dónde está la página que ves al escribir la IP de tu placa?</p>
+      <label><input type="radio" name="n3q7" value="a"> Guardada en tu ordenador.</label>
+      <label><input type="radio" name="n3q7" value="b"> En un servidor de Internet.</label>
+      <label><input type="radio" name="n3q7" value="c"> En la placa, que la construye cada vez que se la pide.</label>
+    </div>
+    <div class="q" data-ans="a" data-why="Hay que escribir http:// seguido de la IP, sin https ni www, y estar en la misma red que la placa." data-hint="La placa no cifra y no tiene nombre de dominio.">
+      <p>8. ¿Qué escribes en el navegador para abrir la página de la placa?</p>
+      <label><input type="radio" name="n3q8" value="a"> http:// y la IP de la placa.</label>
+      <label><input type="radio" name="n3q8" value="b"> https://www. y la IP.</label>
+      <label><input type="radio" name="n3q8" value="c"> La MAC de la placa.</label>
+    </div>
+    <p><button type="button" class="chk">Comprobar</button><span class="score"></span></p>
+  </div>
+
+</section>
+
+<div class="pager"><a href="pi.html">← PI · Sensores + actuadores</a><a href="n4.html">N4 · ESP-NOW →</a></div>
+</main>
+<footer>
+  <div class="wrap">
+    <p>Material de <b>Robótica y Fabricación Digital II</b> · IES Murillo (Sevilla). Autor: Juan Antonio Pérez Rodríguez.
+    Textos, programas y código bajo licencia <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">CC BY-NC-SA 4.0</a>.</p>
+  </div>
+</footer>
+<script src="assets/app.js?v=890831c4"></script>
+</body>
+</html>

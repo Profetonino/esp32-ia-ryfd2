@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>N2b · I2C y sensores especiales · RyFD II</title>
+<link rel="stylesheet" href="assets/estilos.css?v=890831c4">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">Robótica y Fabricación Digital II · 2.º Bachillerato · IES Murillo</div>
+    <h1>De la ESP32 a la IA</h1>
+    <p class="sub">Repaso de sensores, actuadores, servidor web y ESP-NOW con la ESP32 STEAMakers, y prácticas con la ESP32 STEAMakers AI.</p>
+  </div>
+</header>
+<nav class="menu" aria-label="Secciones">
+  <div class="wrap" id="menu">
+    <a href="index.html">Inicio</a>
+    <a href="seguridad.html">Antes de enchufar</a>
+    <a href="n0.html">N0 · Tu placa</a>
+    <a href="n1.html">N1 · Digital</a>
+    <a href="n1b.html">N1b · Salidas y PWM</a>
+    <a href="n2.html">N2 · Analógico</a>
+    <a href="n2b.html" class="on" aria-current="page">N2b · I2C y especiales</a>
+    <a href="pi.html">PI · Sensores + actuadores</a>
+    <a href="n3.html">N3 · Servidor web</a>
+    <a href="n4.html">N4 · ESP-NOW</a>
+    <span class="soon" title="Próximamente">N5 · Placa AI</span>
+    <span class="soon" title="Próximamente">N6 · Agentes con IA</span>
+    <span class="soon" title="Próximamente">Reto final</span>
+  </div>
+</nav>
+
+<main>
+<section class="page" id="n2b">
+  <h2 class="lvl"><span class="badge">N2b</span> I2C y sensores especiales</h2>
+  <p class="lead">Algunos módulos no se conectan con un pin de señal, sino por el bus I2C: pantallas, sensores de gases, de color… Son bloques que ya vienen preparados en el editor, pero con una condición: hay que conocer su dirección. Con este nivel cierras el repaso y quedas listo para la placa de IA.</p>
+  <div class="row"><span class="pill">⏱️ 2 sesiones</span><span class="pill">LCD y OLED</span><span class="pill">CO₂ y color</span><span class="pill">Escáner I2C</span></div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🧵</span> I2C: dos hilos para muchos dispositivos</h3>
+
+    <p>Los sensores y las pantallas que has usado hasta ahora ocupaban un pin cada uno. El bus <b>I2C</b> resuelve eso con dos hilos de datos compartidos por todos los dispositivos: <b>SDA</b> (datos) y <b>SCL</b> (reloj), más alimentación y masa. Cada dispositivo tiene una <b>dirección</b> propia, que es como su número de casa, y la placa se dirige a él por ella. Por eso pueden convivir una pantalla, un sensor de color y otro de gases en los mismos cuatro hilos.</p>
+    <figure class="fig"><img src="img/modulo_lcd_i2c.jpg" alt="Parte trasera de una pantalla LCD 1602 con la placa adaptadora I2C: pines GND, VCC, SDA y SCL" style="width:100%;max-width:560px;height:auto"><figcaption>Adaptador I2C de una pantalla LCD: cuatro pines rotulados GND, VCC, SDA y SCL. Mira siempre el orden en tu pantalla.</figcaption></figure>
+    <table class="t"><tr><th>Dispositivo</th><th>Dirección habitual</th><th>Comentario</th></tr><tr><td>LCD 16×2 con adaptador PCF8574</td><td>0x27 (a veces 0x3F)</td><td>Depende del chip y de los puentes del adaptador.</td></tr><tr><td>Pantalla OLED SSD1306</td><td>0x3C (a veces 0x3D)</td><td>El bloque del editor propone 0x3C.</td></tr><tr><td>Sensor de color TCS34725</td><td>0x29</td><td>Fija en el chip.</td></tr><tr><td>Sensor de CO₂ y COV CCS811</td><td>0x5A (o 0x5B)</td><td>Según el pin de dirección del módulo.</td></tr></table>
+    <div class="note warn"><b>No des por hecha la dirección.</b> Son las direcciones más habituales, pero tu módulo puede ser distinto. Averígüala con el escáner I2C: el bloque «Escanear dispositivos I2C» envía por el puerto serie las direcciones que encuentra, y es lo primero que hay que hacer cuando una pantalla no responde.</div>
+    <figure class="fig"><img src="img/m_i2c_gen.png" alt="Módulo I2C conectado a los cuatro pines GND, V, SDA y SCL del bus I2C de la placa"><figcaption>Esquema sobre la foto de la placa Keyestudio. La ACEBOTT es un clon con los mismos pines y rótulos (IO25, IO17, A2…), aunque sus conectores están colocados en otro sitio de la placa: guíate por los rótulos, no por la posición. Cada cable va a su columna: G negra, V roja, S amarilla. En el bus I2C van cuatro cables: GND negro, V rojo, SDA amarillo y SCL blanco.</figcaption></figure>
+    <figure class="fig"><img src="img/prog_i2c_scan.png" alt="Programa: inicia el puerto serie y ejecuta el bloque Escanear dispositivos I2C en el bucle"><figcaption>El escáner I2C: abre la consola a 115200 y mira las direcciones que aparecen.</figcaption></figure>
+    <p>En la placa, los conectores I2C agrupan GND, V, SDA y SCL en un mismo bloque. Conecta cada pin del módulo con el de su mismo nombre: SDA con SDA y SCL con SCL, sin cruzarlos. Usa para ello el rótulo del módulo y no el color del cable.</p>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🖥️</span> Pantalla LCD</h3>
+
+    <p>La LCD de 16 columnas y 2 filas muestra texto. Se programa indicando <b>columna y fila</b> y el texto que quieres escribir, que puede unir un mensaje fijo con un valor leído de un sensor.</p>
+    <figure class="fig"><img src="img/m_i2c_lcd.png" alt="LCD I2C conectada al bus I2C y fotorresistencia en la entrada analógica A2 (IO35)"><figcaption>Esquema sobre la foto de la placa Keyestudio. La ACEBOTT es un clon con los mismos pines y rótulos (IO25, IO17, A2…), aunque sus conectores están colocados en otro sitio de la placa: guíate por los rótulos, no por la posición. Cada cable va a su columna: G negra, V roja, S amarilla. Compara el orden de pines de tu LCD con el esquema.</figcaption></figure>
+    <figure class="fig"><img src="img/prog_i2c_lcd.png" alt="Programa: inicia la LCD 2x16 en la dirección 0x27, escribe un saludo en la fila 0 y en el bucle escribe en la fila 1 la palabra Luz y la lectura analógica del pin 35"><figcaption>LCD en 0x27: el saludo se escribe una sola vez y la luz se actualiza cada 500 ms.</figcaption></figure>
+    <ul class="checklist"><li><b>Dirección.</b> El bloque «LCD Iniciar (I2C)» propone 0x20. Si el escáner te da 0x27 (o 0x3F), cámbiala; si no, la pantalla no responderá.</li><li><b>Contraste.</b> Si la pantalla se enciende pero solo ves cuadros o nada, gira con un destornillador pequeño el potenciómetro azul del adaptador.</li><li><b>Decimales.</b> Al unir el texto con una lectura analógica aparece un valor con decimales (por ejemplo «Luz: 1523.00»).</li><li><b>Borrar.</b> Para actualizar una línea más corta, escribe espacios o usa «LCD Limpiar» antes de escribir.</li></ul>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🔳</span> Pantalla OLED</h3>
+
+    <p>La OLED es una pantalla gráfica: además de texto puede dibujar píxeles, líneas, rectángulos y círculos. Cada elemento se dibuja con la posición <b>X, Y</b> en píxeles, y la imagen no cambia en la pantalla hasta que se ejecuta «Mostrar» (o hasta que se activa «Mostrar automáticamente» en el bloque de inicio).</p>
+    <figure class="fig"><img src="img/m_i2c_oled.png" alt="OLED I2C conectada al bus I2C y fotorresistencia en la entrada analógica A2 (IO35)"><figcaption>Esquema sobre la foto de la placa Keyestudio. La ACEBOTT es un clon con los mismos pines y rótulos (IO25, IO17, A2…), aunque sus conectores están colocados en otro sitio de la placa: guíate por los rótulos, no por la posición. Cada cable va a su columna: G negra, V roja, S amarilla. Algunas OLED rotulan SCL antes que SDA: lee la serigrafía.</figcaption></figure>
+    <figure class="fig"><img src="img/prog_i2c_oled.png" alt="Programa: inicia la OLED en la dirección 0x3C, limpia la pantalla, escribe el texto Luz y la lectura del pin 35 en la posición 0,0 y ejecuta Mostrar cada 500 ms"><figcaption>Patrón de la OLED: Limpiar → dibujar → Mostrar. El bloque de texto también permite elegir el tamaño.</figcaption></figure>
+    <div class="note info"><b>La idea que diferencia la OLED de la LCD.</b> En la LCD el texto se coloca por casillas; en la OLED por píxeles. Eso permite gráficos sencillos, como una barra que crece con la luz.</div>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🌫️</span> Sensor de CO₂: CCS811</h3>
+
+    <p>El módulo CCS811 mide compuestos orgánicos volátiles (COV) y, a partir de ellos, <b>calcula</b> un equivalente de CO₂ (eCO₂, en ppm) y un valor de TVOC. Se conecta por I2C y el editor tiene un bloque propio con un desplegable para elegir qué valor devolver.</p>
+    <p><b>Montaje.</b> Igual que el módulo I2C genérico de la tarjeta anterior: GND, V, SDA y SCL al bus I2C de la placa. Algunos módulos CCS811 tienen más pines y puede ser necesario llevar el pin WAKE a GND para que respondan: comprueba la serigrafía y la hoja de tu módulo antes de enchufar.</p>
+    <figure class="fig"><img src="img/prog_esp_co2.png" alt="Programa: inicia el puerto serie y envía cada segundo el valor del bloque Sensor CO2 TVOC CCS811 en ppm"><figcaption>Una lectura por segundo del CO₂ equivalente por el puerto serie.</figcaption></figure>
+    <div class="note warn"><b>Qué hay que saber para interpretarlo.</b> No mide el CO₂ directamente: lo estima a partir de gases orgánicos, por ejemplo los que emitimos al respirar. Necesita unos minutos de calentamiento tras encenderlo y los valores iniciales no son fiables. Úsalo para <b>comparar</b> (aula ventilada frente a aula cerrada), no como medida de seguridad.</div>
+    <p>Un análisis con sentido: anota la lectura con la ventana abierta, con la clase llena y con la clase cerrada durante un rato. Lo esperable es que suba con la ocupación; si no lo hace, discute por qué.</p>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🎨</span> Sensor de color: TCS34725</h3>
+
+    <p>El sensor de color mide la luz que le llega en tres componentes, rojo, verde y azul, y un canal sin filtro. El bloque funciona en dos pasos: primero <b>«Capturar color»</b>, que hace la medida, y después se lee el valor que interese con el bloque de valor (R, G o B, entre otros, según el desplegable).</p>
+    <p><b>Montaje.</b> Igual que el módulo I2C genérico: GND, V, SDA y SCL al bus I2C. Si el módulo tiene pines extra (por ejemplo, para su LED de iluminación), mira su serigrafía antes de conectar.</p>
+    <figure class="fig"><img src="img/prog_esp_color.png" alt="Programa: inicia el puerto serie, captura el color del sensor TCS34725 y envía el valor del componente rojo cada 500 ms"><figcaption>Captura y lectura del componente rojo. Cambia el desplegable para leer verde y azul.</figcaption></figure>
+    <ul class="checklist"><li><b>Siempre captura antes de leer.</b> Sin «Capturar color», el valor es el de la medida anterior.</li><li><b>La luz ambiente importa.</b> Mide siempre con la misma iluminación y a la misma distancia del objeto, o los números no se pueden comparar.</li><li><b>Calibra.</b> Mide un papel blanco y uno negro: son tus valores de referencia.</li></ul>
+    <div class="note info"><b>Ampliación.</b> Con un bloque «si» que compare los tres componentes puedes clasificar objetos: rojo, verde o azul. Es un primer clasificador, parecido a lo que haremos después con la IA.</div>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🔁</span> Retos</h3>
+<div class="retos"><div class="reto b"><div class="tag">Básico</div><h4>Dirección confirmada</h4><p>Escanea el bus I2C, anota la dirección de cada dispositivo y comprueba que coincide con la de la tabla.</p></div><div class="reto m"><div class="tag">Medio</div><h4>Termómetro de luz</h4><p>Muestra en la OLED o en la LCD el nivel de luz con un texto y una barra que crezca con la medida.</p></div><div class="reto p"><div class="tag">Pro</div><h4>Clasificador de color</h4><p>Con el sensor de color, haz que un LED rojo, verde o azul se encienda según el color del objeto que le acerques.</p></div></div><p class="small">Conserva en el porfolio: lista de direcciones I2C de tu montaje, foto de la pantalla funcionando y tabla de medidas del sensor que hayas usado.</p>
+  </div><div class="card quiz" data-id="n2b">
+    <h3 class="sec-title"><span class="ico">✅</span> Comprueba lo que has aprendido</h3>
+    <div class="q" data-ans="b" data-why="La dirección es el motivo más común y el escáner la muestra por el puerto serie." data-hint="Piensa en cómo se identifican los dispositivos del bus.">
+      <p>1. Una pantalla I2C no muestra nada. ¿Qué haces primero?</p>
+      <label><input type="radio" name="n2bq1" value="a"> Cambiar de placa.</label>
+      <label><input type="radio" name="n2bq1" value="b"> Ejecutar el escáner I2C y comprobar la dirección.</label>
+      <label><input type="radio" name="n2bq1" value="c"> Subir el brillo con PWM.</label>
+    </div>
+    <div class="q" data-ans="b" data-why="El módulo necesita calentamiento y estima el CO₂ a partir de COV." data-hint="Recuerda cómo lo calcula.">
+      <p>2. El sensor CCS811 da 400 ppm nada más encenderlo. ¿Qué haces?</p>
+      <label><input type="radio" name="n2bq2" value="a"> Concluyo que el aire está perfecto.</label>
+      <label><input type="radio" name="n2bq2" value="b"> Espero a que se caliente y no me fío del dato inicial.</label>
+      <label><input type="radio" name="n2bq2" value="c"> Lo desecho porque está averiado.</label>
+    </div>
+    <div class="q" data-ans="b" data-why="La captura hace la medida; la lectura solo recoge el último valor." data-hint="Sin medida no hay valor.">
+      <p>3. En el sensor de color, ¿qué bloque va primero?</p>
+      <label><input type="radio" name="n2bq3" value="a"> El de leer el valor rojo.</label>
+      <label><input type="radio" name="n2bq3" value="b"> El de capturar color.</label>
+      <label><input type="radio" name="n2bq3" value="c"> Da igual el orden.</label>
+    </div>
+  </div>
+</section>
+
+<div class="pager"><a href="n2.html">← N2 · Analógico</a><a href="pi.html">PI · Sensores + actuadores →</a></div>
+</main>
+<footer>
+  <div class="wrap">
+    <p>Material de <b>Robótica y Fabricación Digital II</b> · IES Murillo (Sevilla). Autor: Juan Antonio Pérez Rodríguez.
+    Textos, programas y código bajo licencia <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">CC BY-NC-SA 4.0</a>.</p>
+  </div>
+</footer>
+<script src="assets/app.js?v=890831c4"></script>
+</body>
+</html>

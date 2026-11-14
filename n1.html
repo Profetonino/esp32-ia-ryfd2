@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>N1 · Sensores digitales · RyFD II</title>
+<link rel="stylesheet" href="assets/estilos.css?v=890831c4">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">Robótica y Fabricación Digital II · 2.º Bachillerato · IES Murillo</div>
+    <h1>De la ESP32 a la IA</h1>
+    <p class="sub">Repaso de sensores, actuadores, servidor web y ESP-NOW con la ESP32 STEAMakers, y prácticas con la ESP32 STEAMakers AI.</p>
+  </div>
+</header>
+<nav class="menu" aria-label="Secciones">
+  <div class="wrap" id="menu">
+    <a href="index.html">Inicio</a>
+    <a href="seguridad.html">Antes de enchufar</a>
+    <a href="n0.html">N0 · Tu placa</a>
+    <a href="n1.html" class="on" aria-current="page">N1 · Digital</a>
+    <a href="n1b.html">N1b · Salidas y PWM</a>
+    <a href="n2.html">N2 · Analógico</a>
+    <a href="n2b.html">N2b · I2C y especiales</a>
+    <a href="pi.html">PI · Sensores + actuadores</a>
+    <a href="n3.html">N3 · Servidor web</a>
+    <a href="n4.html">N4 · ESP-NOW</a>
+    <span class="soon" title="Próximamente">N5 · Placa AI</span>
+    <span class="soon" title="Próximamente">N6 · Agentes con IA</span>
+    <span class="soon" title="Próximamente">Reto final</span>
+  </div>
+</nav>
+
+<main>
+<section class="page" id="n1">
+  <h2 class="lvl"><span class="badge">N1</span> Sensores digitales</h2>
+  <p class="lead">Un sensor digital solo dice «sí» o «no». Para leerlo hace falta un montaje (G-V-S), un programa de tres bloques y un poco de criterio para interpretar lo que llega por el puerto serie. En este nivel aprendes el método con un ejemplo completo y lo aplicas a dos sensores que eliges tú del catálogo.</p>
+  <div class="row"><span class="pill">⏱️ 1–2 sesiones</span><span class="pill">Un ejemplo + catálogo</span><span class="pill">Eliges 2 sensores</span></div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🎯</span> Cómo se lee un sensor digital</h3>
+
+    <p>Un sensor digital solo entrega dos valores, <b>0</b> o <b>1</b>. La placa lo lee con un pin configurado como <b>entrada</b>. Todos los módulos de este nivel se montan igual y se leen igual: lo único que cambia es el módulo y lo que significa su 0 y su 1.</p>
+    <h4>1 · Montaje G-V-S</h4>
+    <p>Cada módulo de tres pines tiene <b>G</b> (masa), <b>V</b> (alimentación) y <b>S</b> (señal). Se conecta a un conector de la placa de modo que G va a GND, V a V y S al pin de señal. Usaremos IO26 (D2) para todos los sensores de este nivel.</p>
+    <figure class="fig"><img src="img/d_n1_p1.png" alt="Montaje G-V-S de un módulo digital en IO26"><figcaption>Montaje G-V-S con un pulsador. Es el mismo para cualquier sensor digital del kit: cambia solo el módulo.</figcaption></figure>
+    <details class="paso"><summary>🛠️ Montaje y puesta en marcha</summary><div class="in"><ol class="steps"><li>Con la placa desenchufada, conecta G a GND, V a V y S a IO26. Pide a otra persona que lo revise con la <a href="seguridad.html">lista de comprobación</a>.</li><li>Conecta la placa por USB, abre el Connector y STEAMakersBlocks y elige la placa «ESP32 STEAMakers».</li><li>Construye el programa de abajo y pulsa <b>Subir</b>.</li><li>Abre la <b>Consola</b> y observa qué números llegan.</li></ol></div></details>
+    <h4>2 · Programa: leer y enviar por el puerto serie</h4>
+    <figure class="fig"><img src="img/prog_n1_p10.png" alt="Programa: inicia el puerto serie y envía la lectura digital del pin 26 cada 200 ms"><figcaption>Programa genérico: «Leer digital Pin 26» enviado por el puerto serie cada 200 ms. Sirve para cualquier módulo digital.</figcaption></figure>
+    <p>Algunos módulos tienen bloque propio en la categoría <b>Sensores</b> del editor (pulsador, táctil, PIR, obstáculos…). Hacen lo mismo con un nombre más claro. Si tu módulo no tiene bloque, usa «Leer digital Pin».</p>
+    <figure class="fig"><img src="img/prog_n1_p8.png" alt="Programa con el bloque propio Detector de obstáculos (IR) enviado por el puerto serie"><figcaption>Con bloque propio: «Detector de obstáculos (IR)» en el pin 26.</figcaption></figure>
+    <div class="note info"><b>Qué mirar en la consola.</b> No des por hecho qué significa un 1: apunta qué valor llega <b>en reposo</b> y cuál al <b>activar</b> el sensor. Puede ser al revés de lo que esperas, y entonces el bloque tiene la casilla «Invertir».</div>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🔌</span> Ejemplo guiado: pulsador y LED</h3>
+
+    <p>Con un solo sensor vamos a hacer todo lo que luego harás con el que elijas. El pulsador es el sensor digital más sencillo: o está pulsado o no lo está. El LED será la respuesta.</p>
+    <h4>1 · Montaje</h4>
+    <figure class="fig"><img src="img/d_n1_p2.png" alt="Pulsador en IO26 y LED en IO17"><figcaption>Pulsador en IO26 (D2) y LED en IO17 (D4), los dos con G-V-S.</figcaption></figure>
+    <details class="paso"><summary>🛠️ Montaje y puesta en marcha</summary><div class="in"><ol class="steps"><li>Con la placa desenchufada, conecta el pulsador (G, V y S a IO26) y el módulo LED (G, V y S a IO17). Revisa con la <a href="seguridad.html">lista de comprobación</a>.</li><li>Conecta por USB y construye primero el programa del paso 2.</li><li>Sube el programa y abre la <b>Consola</b>.</li></ol></div></details>
+    <h4>2 · Primero mira qué valor da</h4>
+    <figure class="fig"><img src="img/prog_n1_p1.png" alt="Programa que envía por el puerto serie el estado del pulsador cada 200 ms"><figcaption>Programa de lectura: el estado del pulsador por el puerto serie cada 200 ms.</figcaption></figure>
+    <p>Antes de encender nada, comprueba en la consola qué llega <b>en reposo</b> y qué llega <b>al pulsar</b>. Es la medida que decide el resto del programa, y es lo que harás siempre con cualquier sensor.</p>
+    <h4>3 · Después, actúa</h4>
+    <figure class="fig"><img src="img/prog_n1_p2.png" alt="Programa: si el pulsador está pulsado enciende el LED de IO17, si no lo apaga"><figcaption>Entrada y salida unidas con «si… hacer… sino».</figcaption></figure>
+    <h4>4 · La plantilla que vale para todos los sensores</h4>
+    <ol class="steps"><li><b>Leer</b> el sensor (un bloque de la categoría Sensores, o «Leer digital Pin»).</li><li><b>Decidir</b> con «si… hacer… sino» según el valor.</li><li><b>Actuar</b> sobre una salida (LED, zumbador…).</li></ol>
+    <p>Cambia solo el sensor; el resto del programa se queda igual. Si el sensor da el valor al revés de lo que esperabas, marca la casilla «Invertir» de su bloque en lugar de rehacer el programa.</p>
+    <p class="small">Los actuadores (LED, semáforo, zumbadores, pantallas) se trabajan a fondo en la sección <a href="pi.html">PI · Sensores + actuadores</a>.</p>
+  </div>
+    <div class="card">
+    <h3 class="sec-title"><span class="ico">⏱️</span> El efecto rebote</h3>
+
+    <p>Un pulsador es un contacto mecánico. Al pulsarlo, las láminas metálicas no se juntan de golpe: rebotan durante unos milisegundos y el pin lee varias veces 1, 0, 1, 0 antes de estabilizarse. La placa es tan rápida que ve todos esos cambios como pulsaciones distintas y un contador sumaría varias unidades con un solo toque.</p>
+    <h4>Dos formas de evitarlo</h4>
+    <ol class="steps"><li><b>Con una espera.</b> Tras detectar el cambio, el programa se detiene unas decenas de milisegundos con «Esperar» y solo entonces vuelve a leer. Es sencillo, pero mientras espera la placa no hace nada más.</li><li><b>Con el bloque «Pulsador… se ha pulsado».</b> Aplica por dentro un filtro antirrebote (en el código generado, 50 ms) y devuelve un 1 solo en el instante de la pulsación, aunque mantengas el dedo apretado.</li></ol>
+    <figure class="fig"><img src="img/prog_s1_deb.png" alt="Programa que envía por el puerto serie el valor del bloque Pulsador se ha pulsado cada 20 milisegundos"><figcaption>Con el bloque «se ha pulsado» la consola muestra un solo 1 por pulsación, sin rebotes y sin repeticiones al mantener apretado.</figcaption></figure>
+    <div class="note info"><b>Compruébalo tú.</b> Haz el programa del ejemplo con «Leer digital Pin 26» y cuenta cuántos 1 aparecen con un solo toque rápido. Luego cámbialo por «se ha pulsado» y compara. Anota las dos cifras en tu ficha: es la prueba de que el rebote existe.</div>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🔀</span> G-V-S no siempre va en el mismo orden</h3>
+
+    <p>Hemos dicho que cada módulo tiene masa (<b>G</b>), alimentación (<b>V</b>) y señal (<b>S</b>), pero <b>el orden en que aparecen depende del fabricante</b>. En el taller hay material de distintas marcas y, si enchufas un módulo dando por hecho el orden, puedes invertir la alimentación y dañar el módulo o la placa. La regla es una sola: <b>se lee la serigrafía del módulo y de la placa antes de conectar, siempre</b>.</p>
+    <figure class="fig"><img src="img/modulos_pulsadores.jpg" alt="Dos módulos pulsador: uno con serigrafía G V S y otro con OUT en el pin central" style="width:100%;max-width:460px;height:auto"><figcaption>Dos pulsadores, dos marcas. El azul (ACEBOTT) rotula G, V y S. El verde rotula OUT en el pin central: aquí la señal no está donde esperarías.</figcaption></figure>
+    <table class="t"><tr><th>Módulo</th><th>Rótulos en la serigrafía</th><th>Qué hay que comprobar</th></tr><tr><td>Módulos ACEBOTT del taller</td><td>G · V · S</td><td>Coinciden con las columnas G (negro), V (rojo) y S (amarillo) de la placa. En los módulos de otras marcas, como Keyestudio, lee igualmente la serigrafía.</td></tr><tr><td>Pulsador verde genérico</td><td>Señal (OUT) en el centro; alimentación y masa en los extremos</td><td>Lee en tu módulo cuál extremo es la masa y cuál la alimentación antes de enchufar.</td></tr><tr><td>Servo de 9 g (cable de tres colores)</td><td>Naranja = señal, rojo = alimentación, marrón = masa</td><td>El orden de los hilos es S-V-G, el contrario al de la placa: no lo enchufes sin pensar.</td></tr><tr><td>Pantalla LCD y OLED por I2C</td><td>GND · VCC · SDA · SCL (cuatro pines)</td><td>El orden de SDA y SCL cambia entre pantallas. Mira la serigrafía de la tuya.</td></tr><tr><td>Sensor de distancia de ultrasonidos</td><td>VCC · Trig · Echo · GND</td><td>Cuatro pines y no tres. No se conecta como un sensor G-V-S.</td></tr></table>
+    <div class="note warn"><b>Antes de conectar, tres comprobaciones.</b> (1) Los rótulos del módulo, de izquierda a derecha. (2) El color de la columna de la placa donde vas a enchufarlo. (3) La lista de comprobación de «Antes de enchufar». Si dudas, pregunta antes de conectar.</div>
+    <p class="small">Objetivo de esta sección: que sepas desenvolverte con kits de cualquier marca, no solo con el del taller. Un buen técnico lee la serigrafía; uno apresurado quema el módulo.</p>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">📋</span> Sensores digitales del kit</h3>
+
+    <p>Esta es la lista de la que eliges. Si en tu kit falta uno, coge otro parecido: el método es el mismo. Si te atascas, cada sensor tiene debajo una <b>pista</b> con su esquema y su programa: ábrela después de intentarlo.</p>
+    <table class="t"><tr><th>Sensor</th><th>Qué detecta</th><th>Bloque propio en el editor</th><th>Detalle a tener en cuenta</th></tr><tr><td>Pulsador</td><td>Pulsación</td><td>«Pulsador»</td><td>Al mantenerlo pulsado el valor se repite; para contar usa «se ha pulsado».</td></tr><tr><td>Pulsador táctil</td><td>Contacto del dedo</td><td>«Pulsador táctil»</td><td>No tiene partes móviles: detecta capacidad eléctrica.</td></tr><tr><td>Inclinación</td><td>Posición del módulo</td><td>«Sensor de orientación»</td><td>Dentro hay una bolita o un contacto: puede dar rebotes al moverlo.</td></tr><tr><td>Reed</td><td>Imán cercano</td><td>«Interruptor magnético»</td><td>Contacto que se cierra con el campo del imán.</td></tr><tr><td>PIR</td><td>Movimiento de personas</td><td>«Detector de movimiento (PIR)»</td><td>Necesita unos segundos de estabilización al arrancar.</td></tr><tr><td>Obstáculos IR</td><td>Objeto delante</td><td>«Detector de obstáculos (IR)»</td><td>Suele tener un potenciómetro para ajustar la distancia.</td></tr><tr><td>Fotointerruptor</td><td>Objeto que corta el haz de luz</td><td>«Foto-interruptor»</td><td>Digital. Pasa algo entre las dos patas del módulo y la señal cambia.</td></tr></table>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🧰</span> Pistas por sensor</h3>
+<p>Esquema y programa de cada sensor de la lista. Ábrelas <b>después</b> de intentarlo por tu cuenta con la plantilla. El montaje es siempre G-V-S: solo cambia el módulo y el pin.</p><details class="paso"><summary>Inclinación · IO26 (D2)</summary><div class="in"><p>Dentro hay un contacto o una bolita: puede dar rebotes al moverlo. El programa enciende un LED en IO17 según la posición.</p><figure class="fig"><img src="img/d_n1_p6.png" alt="Esquema de conexiones del sensor Inclinación"><figcaption>Inclinación: IO26 (D2)</figcaption></figure><figure class="fig"><img src="img/prog_n1_p6.png" alt="Programa de lectura del sensor Inclinación"><figcaption>Programa de lectura.</figcaption></figure></div></details><details class="paso"><summary>PIR (movimiento) · IO14 (D7)</summary><div class="in"><p>Necesita unos segundos de estabilización al arrancar. El programa activa un zumbador en IO27 al detectar movimiento.</p><figure class="fig"><img src="img/d_n1_p7.png" alt="Esquema de conexiones del sensor PIR (movimiento)"><figcaption>PIR (movimiento): IO14 (D7)</figcaption></figure><figure class="fig"><img src="img/prog_n1_p7.png" alt="Programa de lectura del sensor PIR (movimiento)"><figcaption>Programa de lectura.</figcaption></figure></div></details><details class="paso"><summary>Obstáculos IR · IO26 (D2)</summary><div class="in"><p>Suele tener un potenciómetro para ajustar la distancia de detección.</p><figure class="fig"><img src="img/d_n1_p8.png" alt="Esquema de conexiones del sensor Obstáculos IR"><figcaption>Obstáculos IR: IO26 (D2)</figcaption></figure><figure class="fig"><img src="img/prog_n1_p8.png" alt="Programa de lectura del sensor Obstáculos IR"><figcaption>Programa de lectura.</figcaption></figure></div></details><details class="paso"><summary>Pulsador táctil · IO26 (D2)</summary><div class="in"><p>No tiene partes móviles: detecta el contacto del dedo. El programa enciende un LED en IO17.</p><figure class="fig"><img src="img/d_n1_p9.png" alt="Esquema de conexiones del sensor Pulsador táctil"><figcaption>Pulsador táctil: IO26 (D2)</figcaption></figure><figure class="fig"><img src="img/prog_n1_p9.png" alt="Programa de lectura del sensor Pulsador táctil"><figcaption>Programa de lectura.</figcaption></figure></div></details><details class="paso"><summary>Reed (imán) · IO26 (D2)</summary><div class="in"><p>Tiene bloque propio, «Interruptor magnético»; el programa de la imagen usa «Leer digital Pin», que da el mismo resultado. Acerca y aleja un imán.</p><figure class="fig"><img src="img/d_n1_p10.png" alt="Esquema de conexiones del sensor Reed (imán)"><figcaption>Reed (imán): IO26 (D2)</figcaption></figure><figure class="fig"><img src="img/prog_n1_p10.png" alt="Programa de lectura del sensor Reed (imán)"><figcaption>Programa de lectura.</figcaption></figure></div></details>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">📝</span> Tu ficha</h3>
+
+    <p><b>Elige dos sensores</b> de la lista, uno por persona del grupo si sois dos en la placa, y completa una ficha para cada uno. La ficha es la evidencia que entregas en el porfolio, junto con la foto del montaje y una captura de la consola.</p>
+    <table class="t ficha"><tr><th>Sensor</th><th>Pin de señal</th><th>Valor en reposo</th><th>Valor al activarlo</th><th>Observaciones (rebotes, tiempo de arranque, ajustes)</th></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>
+    <h4>Si no devuelve nada</h4>
+    <p>Un sensor que no responde también es un resultado: anótalo en la ficha y revisa esta lista antes de pedir ayuda.</p>
+    <ul class="checklist"><li><label><input type="checkbox"> G, V y S están en los pines correctos y los cables hacen buen contacto.</label></li><li><label><input type="checkbox"> El pin del bloque es el mismo al que has conectado la señal (la placa lo indica entre paréntesis, por ejemplo 26 (D2)).</label></li><li><label><input type="checkbox"> El puerto serie está iniciado a 115200 baudios y la consola usa la misma velocidad.</label></li><li><label><input type="checkbox"> El módulo está alimentado (muchos tienen un LED de encendido).</label></li><li><label><input type="checkbox"> Has probado con otro cable y con otro pin de la misma familia.</label></li><li><label><input type="checkbox"> Has probado con otro módulo igual: si funciona, el primero estaba averiado.</label></li></ul><p class="cl-count small"></p>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🔁</span> Retos de repaso</h3>
+
+    <p>Hazlos con el sensor que elegiste. Cada nivel incluye al anterior.</p><div class="retos"><div class="reto b"><div class="tag">Básico</div><h4>Escribe una frase</h4><p>Haz que la consola muestre «activado» o «reposo» en lugar de un número, con un bloque «si… hacer… sino».</p></div><div class="reto m"><div class="tag">Medio</div><h4>Cuenta activaciones</h4><p>Cuenta cuántas veces se activa el sensor. Comprueba qué pasa si lo mantienes activo y explica por qué el contador sube más de lo esperado.</p></div><div class="reto p"><div class="tag">Pro</div><h4>Detecta el cambio</h4><p>Suma solo cuando el sensor pasa de reposo a activado. Pruébalo con activaciones rápidas y razona si falla alguna.</p></div></div><details class="paso"><summary>💡 Pista para el reto Pro</summary><div class="in"><p>Con el pulsador, el bloque «se ha pulsado» detecta el cambio sin que guardes el valor anterior. Con los demás sensores tendrás que guardarlo tú en una variable.</p><figure class="fig"><img src="img/prog_n1_reto.png" alt="Programa con el bloque Pulsador «se ha pulsado» que envía la palabra pulsado"><figcaption>Pulsador con «se ha pulsado».</figcaption></figure></div></details>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">📓</span> Porfolio</h3>
+
+    <ul>
+      <li>Las dos fichas completadas, con foto del montaje de cada sensor.</li>
+      <li>Una captura de la consola con el valor en reposo y al activar.</li>
+      <li>El programa de un reto de cada nivel.</li>
+      <li>Un fallo que tuvisteis y cómo lo localizasteis.</li>
+    </ul>
+  </div>
+
+  <div class="card quiz" data-id="n1">
+    <h3 class="sec-title"><span class="ico">✅</span> Comprueba lo que has aprendido</h3>
+    <div class="q" data-ans="c" data-why="Una entrada se lee; una salida se escribe. Un pulsador informa a la placa." data-hint="Piensa en quién envía la información: ¿el módulo o la placa?">
+      <p>1. ¿Qué es un pulsador para la placa?</p>
+      <label><input type="radio" name="n1q1" value="a"> Una salida, porque la placa lo enciende.</label>
+      <label><input type="radio" name="n1q1" value="b"> Un proceso, porque decide.</label>
+      <label><input type="radio" name="n1q1" value="c"> Una entrada digital, porque informa a la placa de su estado.</label>
+    </div>
+    <div class="q" data-ans="b" data-why="Cada módulo puede dar una tensión distinta según su montaje; se comprueba con la consola, no se supone." data-hint="Lo importante es medirlo, no darlo por hecho.">
+      <p>2. No sabes si tu pulsador da 1 o 0 al pulsarlo. ¿Qué haces?</p>
+      <label><input type="radio" name="n1q2" value="a"> Cambio de pulsador hasta que dé 1.</label>
+      <label><input type="radio" name="n1q2" value="b"> Lo compruebo en la consola serie.</label>
+      <label><input type="radio" name="n1q2" value="c"> Lo supongo igual que en la práctica anterior.</label>
+    </div>
+    <div class="q" data-ans="a" data-why="Si no detectas el cambio, el contador suma mientras el pulsador está apretado." data-hint="Piensa en cuántas veces se ejecuta el bucle por segundo.">
+      <p>3. Mantienes apretado el pulsador y el contador sube sin parar. ¿Por qué?</p>
+      <label><input type="radio" name="n1q3" value="a"> Porque el bucle lee el valor muchas veces por segundo y suma cada vez.</label>
+      <label><input type="radio" name="n1q3" value="b"> Porque el pulsador está roto.</label>
+      <label><input type="radio" name="n1q3" value="c"> Porque la consola va muy rápida.</label>
+    </div>
+    <div class="q" data-ans="c" data-why="IO0 no se conecta, IO2 interfiere con la carga del programa y IO1/IO3 son los de la comunicación serie." data-hint="Repasa la página «Antes de enchufar nada».">
+      <p>4. ¿Cuál de estos pines NO usarías para un módulo?</p>
+      <label><input type="radio" name="n1q4" value="a"> IO26</label>
+      <label><input type="radio" name="n1q4" value="b"> IO25</label>
+      <label><input type="radio" name="n1q4" value="c"> IO0</label>
+    </div>
+    <div class="q" data-ans="b" data-why="Una espera detiene el programa; para atender dos cosas hay que comprobar el tiempo transcurrido en lugar de esperar." data-hint="Mientras espera, el programa no hace nada más.">
+      <p>5. Con «esperar 4000 ms» en el semáforo, ¿qué ocurre con el pulsador?</p>
+      <label><input type="radio" name="n1q5" value="a"> Se lee igual, porque es una entrada.</label>
+      <label><input type="radio" name="n1q5" value="b"> No se lee durante la espera, porque el programa está parado.</label>
+      <label><input type="radio" name="n1q5" value="c"> Se apaga hasta que acaba la espera.</label>
+    </div>
+    <p><button type="button" class="chk">Comprobar</button><span class="score"></span></p>
+  </div>
+
+</section>
+
+<div class="pager"><a href="n0.html">← N0 · Tu placa</a><a href="n1b.html">N1b · Salidas y PWM →</a></div>
+</main>
+<footer>
+  <div class="wrap">
+    <p>Material de <b>Robótica y Fabricación Digital II</b> · IES Murillo (Sevilla). Autor: Juan Antonio Pérez Rodríguez.
+    Textos, programas y código bajo licencia <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">CC BY-NC-SA 4.0</a>.</p>
+  </div>
+</footer>
+<script src="assets/app.js?v=890831c4"></script>
+</body>
+</html>

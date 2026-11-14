@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>De la ESP32 a la IA · RyFD II</title>
+<link rel="stylesheet" href="assets/estilos.css?v=890831c4">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">Robótica y Fabricación Digital II · 2.º Bachillerato · IES Murillo</div>
+    <h1>De la ESP32 a la IA</h1>
+    <p class="sub">Repaso de sensores, actuadores, servidor web y ESP-NOW con la ESP32 STEAMakers, y prácticas con la ESP32 STEAMakers AI.</p>
+  </div>
+</header>
+<nav class="menu" aria-label="Secciones">
+  <div class="wrap" id="menu">
+    <a href="index.html" class="on" aria-current="page">Inicio</a>
+    <a href="seguridad.html">Antes de enchufar</a>
+    <a href="n0.html">N0 · Tu placa</a>
+    <a href="n1.html">N1 · Digital</a>
+    <a href="n1b.html">N1b · Salidas y PWM</a>
+    <a href="n2.html">N2 · Analógico</a>
+    <a href="n2b.html">N2b · I2C y especiales</a>
+    <a href="pi.html">PI · Sensores + actuadores</a>
+    <a href="n3.html">N3 · Servidor web</a>
+    <a href="n4.html">N4 · ESP-NOW</a>
+    <span class="soon" title="Próximamente">N5 · Placa AI</span>
+    <span class="soon" title="Próximamente">N6 · Agentes con IA</span>
+    <span class="soon" title="Próximamente">Reto final</span>
+  </div>
+</nav>
+
+<main>
+<section class="page" id="inicio">
+  <h2 class="lvl"><span class="badge">RyFD II</span> De la ESP32 a la IA</h2>
+  <p class="lead">Este curso empieza repasando lo que ya sabes de sensores y actuadores, pero con una placa nueva: la <b>ESP32 STEAMakers</b>. Después le sacamos partido de verdad, convirtiéndola en un servidor web y haciendo que dos placas se hablen entre sí. Y al final llega lo bueno: la <b>ESP32 STEAMakers AI</b>, una placa que escucha, piensa con ayuda de la inteligencia artificial y responde con su propia voz.</p>
+
+  <div class="note info"><b>Antes de tocar ninguna placa</b>, lee <a href="seguridad.html">«Antes de enchufar nada»</a> y hazlo con tu grupo.</div>
+
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🗺️</span> El camino</h3>
+    <div class="levels">
+      <a class="lv" href="seguridad.html"><div class="n">⚠️</div><div class="t">Antes de enchufar</div><div class="d">Normas de seguridad eléctrica. Imprescindible.</div></a>
+      <a class="lv" href="n0.html"><div class="n">N0</div><div class="t">Tu placa y tu entorno</div><div class="d">Qué tiene la ESP32 STEAMakers y cómo se programa.</div></a>
+      <a class="lv" href="n1.html"><div class="n">N1</div><div class="t">Sensores digitales</div><div class="d">Un método para leer cualquier sensor de dos estados. Eliges dos del kit.</div></a>
+      <a class="lv" href="n1b.html"><div class="n">N1b</div><div class="t">Salidas digitales y PWM</div><div class="d">LED, relé, zumbadores, motor en clase y regulación con PWM.</div></a>
+      <a class="lv" href="n2.html"><div class="n">N2</div><div class="t">Sensores analógicos</div><div class="d">Lectura, mapeo y calibración. Eliges dos del kit.</div></a>
+      <a class="lv" href="n2b.html"><div class="n">N2b</div><div class="t">I2C y sensores especiales</div><div class="d">Pantallas LCD y OLED, sensor de CO₂ y sensor de color.</div></a>
+      <a class="lv" href="pi.html"><div class="n">PI</div><div class="t">Sensores + actuadores</div><div class="d">Prácticas completas: riego, alarma, luz de noche y pantallas I2C.</div></a>
+      <a class="lv" href="n3.html"><div class="n">N3</div><div class="t">Servidor web</div><div class="d">Tu placa como una página web: publica la temperatura y la humedad de un DHT11 y controla un LED desde otro equipo.</div></a>
+      <a class="lv" href="n4.html"><div class="n">N4</div><div class="t">ESP-NOW</div><div class="d">Dos placas que se comunican por radio, sin router: una mide la temperatura y la otra la recibe.</div></a>
+      <div class="lv soon"><div class="n">N5</div><div class="t">La placa AI</div><div class="d">ESP32-S3, micrófono, altavoz y pantalla. Primer agente.</div></div>
+      <div class="lv soon"><div class="n">N6</div><div class="t">Agentes con IA</div><div class="d">Un asistente con personalidad propia y sensores.</div></div>
+      <div class="lv reto soon"><div class="n">Reto</div><div class="t">Asistente para un colectivo</div><div class="d">Tu proyecto final, en grupo, con memoria técnica.</div></div>
+    </div>
+    <p class="amp" style="font-size:.9rem;color:var(--ink2)">Los niveles en gris se irán publicando durante el curso.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3 class="sec-title"><span class="ico">👥</span> Cómo trabajamos</h3>
+      <p>Trabajáis en <b>seis grupos</b> estables durante todo el material. Dentro de cada grupo se reparten los papeles y los <b>van rotando</b>: quien monta, quien programa, quien revisa el montaje y quien documenta en el porfolio. Si un día solo has montado, el siguiente programas.</p>
+      <p>Cada grupo dispone de dos placas ESP32 STEAMakers para el repaso y de un kit de la placa AI para la parte final.</p>
+    </div>
+    <div class="card">
+      <h3 class="sec-title"><span class="ico">📓</span> Qué guardas en el porfolio</h3>
+      <p>Una práctica no está terminada hasta que queda explicada en el porfolio: el montaje (foto y esquema), el programa, lo que ha pasado al probarlo y lo que habéis aprendido de los fallos. <b>Si no está en el porfolio, no se puede evaluar.</b></p>
+    </div>
+  </div>
+
+  <div class="note info"><b>Sobre la inteligencia artificial.</b> En la parte final vais a hablar con un asistente a través de internet. Aprenderéis a usarlo, pero también a preguntaros qué datos viajan, a dónde van y cuándo no conviene fiarse de lo que responde. Es parte del contenido, no un añadido.</div>
+</section>
+
+<div class="pager"><span></span><a href="seguridad.html">Antes de enchufar →</a></div>
+</main>
+<footer>
+  <div class="wrap">
+    <p>Material de <b>Robótica y Fabricación Digital II</b> · IES Murillo (Sevilla). Autor: Juan Antonio Pérez Rodríguez.
+    Textos, programas y código bajo licencia <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">CC BY-NC-SA 4.0</a>.</p>
+  </div>
+</footer>
+<script src="assets/app.js?v=890831c4"></script>
+</body>
+</html>

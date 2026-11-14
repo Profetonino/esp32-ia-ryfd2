@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>N4 · Placas que hablan (ESP-NOW) · RyFD II</title>
+<link rel="stylesheet" href="assets/estilos.css?v=890831c4">
+</head>
+<body>
+<header class="top">
+  <div class="wrap">
+    <div class="kicker">Robótica y Fabricación Digital II · 2.º Bachillerato · IES Murillo</div>
+    <h1>De la ESP32 a la IA</h1>
+    <p class="sub">Repaso de sensores, actuadores, servidor web y ESP-NOW con la ESP32 STEAMakers, y prácticas con la ESP32 STEAMakers AI.</p>
+  </div>
+</header>
+<nav class="menu" aria-label="Secciones">
+  <div class="wrap" id="menu">
+    <a href="index.html">Inicio</a>
+    <a href="seguridad.html">Antes de enchufar</a>
+    <a href="n0.html">N0 · Tu placa</a>
+    <a href="n1.html">N1 · Digital</a>
+    <a href="n1b.html">N1b · Salidas y PWM</a>
+    <a href="n2.html">N2 · Analógico</a>
+    <a href="n2b.html">N2b · I2C y especiales</a>
+    <a href="pi.html">PI · Sensores + actuadores</a>
+    <a href="n3.html">N3 · Servidor web</a>
+    <a href="n4.html" class="on" aria-current="page">N4 · ESP-NOW</a>
+    <span class="soon" title="Próximamente">N5 · Placa AI</span>
+    <span class="soon" title="Próximamente">N6 · Agentes con IA</span>
+    <span class="soon" title="Próximamente">Reto final</span>
+  </div>
+</nav>
+
+<main>
+<section class="page" id="n4">
+  <h2 class="lvl"><span class="badge">N4</span> Placas que hablan (ESP-NOW)</h2>
+  <p class="lead">Dos placas pueden comunicarse sin router ni red Wi-Fi. Una mide la temperatura con un DHT11 y la envía; la otra la recibe y la muestra. Es el primer paso hacia sistemas con varios nodos, como los que verás después con la placa de inteligencia artificial.</p>
+  <div class="row"><span class="pill">⏱️ 2–3 sesiones</span><span class="pill">2 placas por grupo</span><span class="pill">Emisor → receptor</span></div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🧠</span> Cómo funciona</h3>
+
+    <p>ESP-NOW es un protocolo de Espressif, el fabricante del ESP32, que permite que dos placas se manden mensajes <b>directamente</b>, sin router ni red Wi-Fi de por medio. Cada placa se identifica con su <b>dirección MAC</b>: la emisora envía el mensaje «a la MAC» de la receptora.</p>
+    <figure class="fig"><img src="img/d_n4_esquema.png" alt="Dos placas ESP32: la A, con un DHT11, envía la temperatura a la B, que la muestra por el puerto serie"><figcaption>Placa A: emisora con DHT11. Placa B: receptora conectada al ordenador.</figcaption></figure>
+    <p>Esto lo hace muy útil para montajes con varias placas separadas: una puede medir en el patio y otra mostrar el dato en el aula, sin depender de la red del centro. Como no se conecta a «AndaRed IoT», <b>tampoco hace falta dar de alta su MAC en la red</b>.</p>
+    <div class="note info"><b>Lo que debes saber.</b> El mensaje es un texto corto (hasta 250 caracteres) y <b>siempre viaja como texto</b>: en la práctica P4 verás cómo mandar números y varios datos sin que se pierdan por el camino, el envío no garantiza que llegue, y ninguna de las dos placas necesita estar conectada a un router. Para mandar a una placa necesitas su MAC; la receptora no necesita conocer la de la emisora.</div>
+    <h4>Objetivos</h4>
+    <ul><li>Explicar qué diferencia hay entre ESP-NOW y un servidor web.</li><li>Leer la MAC de una placa y emparejarla con otra.</li><li>Enviar la lectura de un sensor de una placa a otra y recibirla.</li><li>Razonar qué límites tiene la comunicación: alcance, pérdida de mensajes y seguridad.</li></ul>
+    <p class="small">Trabajad por parejas de placas: cada grupo tiene dos, una A y otra B.</p>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🔍</span> P1 · La MAC del receptor</h3>
+
+    <p>Conecta la <b>placa B</b> (la receptora) al ordenador y lee su MAC con el mismo programa que usaste en N3.</p>
+    <figure class="fig"><img src="img/prog_n3_mac.png" alt="Programa que envía la MAC de la placa por el puerto serie"><figcaption>Programa para leer la MAC de la placa B.</figcaption></figure>
+    <ol class="steps"><li>Sube el programa a la placa B y abre la consola.</li><li>Anota la MAC, que tiene seis grupos de dos cifras, por ejemplo <code>A4:CF:12:34:56:78</code> (ejemplo inventado).</li><li>Rotula la placa con «B» y su MAC, para no confundirla con la de otro grupo.</li></ol>
+    <div class="note warn"><b>Ojo con los datos.</b> Cada placa tiene su propia MAC. Si copias la del ejemplo en vez de la tuya, el mensaje no llegará a ninguna parte y no habrá ningún aviso.</div>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">📤</span> P2 · La placa A mide y envía</h3>
+
+    <p><b>Situación.</b> Una placa debe medir la temperatura del aula y mandársela a la otra, que está en otro sitio, sin pasar por ningún router.</p>
+    <h4>1 · Esquema de conexiones</h4>
+    <figure class="fig"><img src="img/d_n3_dht.png" alt="Montaje del módulo DHT11 en IO26"><figcaption>Placa A: DHT11 con G, V y S en IO26 (D2).</figcaption></figure>
+    <details class="paso"><summary>🛠️ Montaje y puesta en marcha</summary><div class="in"><ol class="steps"><li>Con la placa A desenchufada, monta el DHT11 como en el esquema y revisa con la <a href="seguridad.html">lista de comprobación</a>.</li><li>Construye el programa de abajo y sustituye la MAC del ejemplo por la de tu placa B.</li><li>Sube el programa a la placa A y abre la consola: debe aparecer la temperatura cada dos segundos.</li></ol></div></details>
+    <h4>2 · Programa de la placa A</h4>
+    <figure class="fig"><img src="img/prog_n4_emisor.png" alt="Programa del emisor: inicia ESP-NOW, empareja la MAC de la placa B y envía la temperatura cada dos segundos"><figcaption>«Iniciar» y «Emparejar nodo remoto» una sola vez; en el bucle, «Enviar a MAC» con la temperatura del DHT11.</figcaption></figure>
+    <p>Tres pasos: <b>iniciar</b> ESP-NOW, <b>emparejar</b> la MAC de la placa B y <b>enviar</b> el dato. El bloque de envío pide la MAC en seis casillas, una por cada grupo de cifras, y el dato que mandas. Se envía cada dos segundos: más deprisa no tiene sentido con un DHT11.</p>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">📥</span> P3 · La placa B recibe</h3>
+
+    <p>Ahora la placa B, conectada al ordenador, recibe el dato y lo muestra por la consola.</p>
+    <figure class="fig"><img src="img/prog_n4_receptor.png" alt="Programa del receptor: inicia ESP-NOW y, al recibir datos, envía por la consola Temperatura recibida seguida del dato"><figcaption>El bucle está vacío: lo que hace la placa B ocurre dentro del bloque «Al recibir datos».</figcaption></figure>
+    <p>El bloque <b>«Al recibir datos»</b> es un bloque aparte: no va dentro de Inicializar ni del Bucle. Se ejecuta él solo cada vez que llega un mensaje, y «Datos recibidos» contiene el texto que mandó la placa A.</p>
+    <div class="note warn"><b>No bloquees la receptora.</b> Según la guía de ESP-NOW para esta placa (J. López, 2024), el evento «Al recibir datos» puede quedarse bloqueado si el programa usa esperas largas. En la placa B no pongas bloques «Esperar»: deja el bucle vacío, como en el ejemplo.</div>
+    <details class="paso"><summary>🛠️ Comprobar que funciona</summary><div class="in"><ol class="steps"><li>Sube el programa a la placa B y déjala conectada al ordenador con la consola abierta.</li><li>Alimenta la placa A (con un cargador USB o con el otro ordenador) y comprueba que aparece «Temperatura recibida» cada dos segundos.</li><li>Aleja las placas y tapa el sensor de la A con la mano: la medida debe cambiar.</li></ol></div></details>
+    <div class="note warn"><b>Si no llega nada.</b> Revisa por orden: ¿has puesto en la A la MAC de la <b>B</b> y no la tuya?, ¿están las dos placas en el mismo canal Wi-Fi? (Es obligatorio. Si ninguna se conecta a un router suelen coincidir, pero no lo des por hecho.), ¿has iniciado ESP-NOW en las dos?, ¿la placa A mide? Mira primero su consola.</div>
+    <h4>Retos</h4>
+    <div class="retos"><div class="reto b"><div class="tag">Básico</div><h4>Otro ritmo</h4><p>Cambia el tiempo entre envíos y mira qué ocurre en la consola de la placa B. Anota a partir de qué ritmo empiezan a verse lecturas repetidas.</p></div><div class="reto m"><div class="tag">Medio</div><h4>Alarma remota</h4><p>Haz que la placa B encienda un LED o un zumbador cuando la temperatura recibida pase de un umbral. Pista: el dato llega como texto y hay que convertirlo en número antes de compararlo.</p></div><div class="reto p"><div class="tag">Pro</div><h4>Un solo mensaje</h4><p>Haz primero la práctica P4 y usa también la humedad recibida en la alarma: por ejemplo, que suene el zumbador solo si hay mucho calor y poca humedad.</p></div></div>
+    <p class="small"><b>Entrega en el porfolio:</b> foto de las dos placas rotuladas con la MAC de la B, captura de la consola de la B con varias lecturas, el programa de la A y el de la B, y el reto que hayas hecho.</p>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🧩</span> P4 · Qué viaja por el aire: texto, números y JSON</h3>
+
+    <p>Hasta aquí la placa A mandaba un solo número. ¿Y si quieres enviar la temperatura, la humedad y el nombre de tu grupo? Antes de programarlo hay que saber <b>cómo viaja un mensaje</b>, porque es la causa más frecuente de que «en la otra placa no se vea nada».</p>
+    <h4>Qué viaja por el aire</h4>
+    <ul><li>El bloque «Enviar a MAC» convierte lo que le des en un <b>texto</b> y manda esos caracteres, hasta un máximo de 250.</li>
+    <li>En la placa B, «Datos recibidos» es <b>siempre un texto</b>, aunque lo que enviaste fuese un número.</li>
+    <li>Un número suelto llega bien, pero con dos decimales como mucho (por ejemplo, <code>26.20</code>), y hay que tratarlo como número en la B cuando quieras comparar o calcular con él.</li>
+    <li>Para mandar <b>varios datos a la vez</b> hay que ponerles nombre y orden. Eso es lo que hace el formato <b>JSON</b>.</li></ul>
+    <div class="note info"><b>Qué es JSON.</b> Es un texto con parejas «clave: valor», por ejemplo <code>{"T":26.2,"H":56}</code>. La clave es el nombre del dato y el valor, el dato. <b>Las comillas importan:</b> un valor entre comillas es un texto; sin comillas, es un número.</div>
+    <h4>1 · La placa A empaqueta los datos</h4>
+    <p>La placa A mide la temperatura y la humedad, las guarda en dos variables, las empaqueta con «Codificar {Key:Value}» (una pareja por dato) y envía el paquete. Las dos variables son <b>numéricas</b> y la variable <code>datos</code> es de <b>texto</b>.</p>
+    <figure class="fig"><img src="img/prog_n4_json_emisor.png" alt="Programa del emisor: mide temperatura y humedad, las codifica en JSON con las claves T y H y las envía a la placa B"><figcaption>Emisor: dos medidas, un solo mensaje. Cambia la MAC del ejemplo por la de tu placa B.</figcaption></figure>
+    <h4>2 · La placa B desempaqueta</h4>
+    <p>La placa B abre el paquete con «Analizar JSON», comprueba que ha llegado bien y saca cada dato por su clave, diciendo <b>de qué tipo es</b>.</p>
+    <figure class="fig"><img src="img/prog_n4_json_receptor.png" alt="Programa del receptor: analiza el JSON recibido, comprueba que es correcto y lee T y H como números"><figcaption>Receptor: las claves tienen que ser exactamente las mismas que en el emisor (T y H), y el tipo, el mismo.</figcaption></figure>
+    <h4>La regla de los tipos</h4>
+    <table class="t"><tr><th>Cómo lo mandas</th><th>Cómo viaja</th><th>Cómo lo lees en la B</th></tr><tr><td>Variable o bloque numérico</td><td><code>{"T":26.2}</code> (sin comillas)</td><td>«como Número»: correcto</td></tr><tr><td>Variable o bloque de texto</td><td><code>{"T":"26.2"}</code> (con comillas)</td><td>«como Texto»: correcto. «como Número»: devuelve 0</td></tr></table>
+    <div class="note warn"><b>El error que no avisa.</b> Si lees como Número un valor que viajó entre comillas, la placa B no da error: simplemente muestra <b>0</b>. Y si lees como Texto un valor que viajó como número, no muestra nada. Emisor y receptor tienen que ponerse de acuerdo en el tipo de cada clave.</div>
+    <details class="paso"><summary>🧪 Pruébalo: provoca el error a propósito</summary><div class="in"><ol class="steps"><li>Monta en la placa A el programa de la figura: convierte la temperatura en texto con «crear texto con» antes de meterla en el JSON.</li><li>Deja el programa de la B como estaba y mira la consola: la temperatura aparece como 0.</li><li>Razona por qué ocurre, comparando el mensaje <code>{"T":"26.2"}</code> con <code>{"T":26.2}</code>.</li><li>Arréglalo de dos maneras: dejando de convertir a texto en la A, o leyendo como Texto en la B.</li></ol><figure class="fig"><img src="img/prog_n4_error.png" alt="Programa del emisor con el error: la temperatura se convierte en texto antes de codificarla"><figcaption>Con este emisor el JSON lleva la temperatura entre comillas, y el receptor de la figura anterior la leerá como 0.</figcaption></figure></div></details>
+    <div class="note warn"><b>Si no se ve bien en la B.</b> Revisa por orden: ¿las claves se escriben igual (T y H, en mayúsculas) en la A y en la B?, ¿el tipo coincide?, ¿«¿JSON analizado correctamente?» da verdadero?, ¿has dejado alguna espera larga en la B?, ¿el mensaje pasa de 250 caracteres?</div>
+    <h4>Retos</h4>
+    <div class="retos"><div class="reto b"><div class="tag">Básico</div><h4>Una clave más</h4><p>Añade en el emisor una tercera clave, «ID», con el nombre de tu grupo (un texto), y muéstrala en la consola de la B.</p></div><div class="reto m"><div class="tag">Medio</div><h4>Orden remota</h4><p>Haz que la B encienda el LED si la humedad recibida supera el 60 %. Pista: compara el número, no el texto.</p></div><div class="reto p"><div class="tag">Pro</div><h4>Avisa si falla</h4><p>Haz que la B escriba «JSON no válido» si el mensaje llega mal. Prueba a mandar a mano un texto sin llaves.</p></div></div>
+    <p class="small"><b>Entrega en el porfolio:</b> los dos programas, una captura de la consola de la B con temperatura y humedad, y la captura del error provocado con tu explicación.</p>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">📏</span> Pruebas y límites</h3>
+
+    <p>Una comunicación se evalúa midiendo, no suponiendo. La confirmación de envío del bloque «Comprobar si el último envío ha sido correcto» solo indica que el mensaje llegó a nivel de radio; Espressif aclara que no garantiza que el programa de la otra placa lo haya recibido. Con las dos placas funcionando haz estas pruebas y anota los resultados en una tabla:</p>
+    <table class="t ficha"><tr><th>Prueba</th><th>Condiciones</th><th>Mensajes enviados</th><th>Mensajes recibidos</th><th>Observaciones</th></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>
+    <ul><li><b>Distancia.</b> Aleja la placa A por el aula y el pasillo.</li><li><b>Obstáculos.</b> Interpón una pared o una puerta metálica.</li><li><b>Interferencias.</b> Repite la prueba con otros grupos probando a la vez.</li></ul>
+    <p>Los resultados dependen del aula y del momento: no hay un alcance «oficial» que puedas dar por bueno sin medirlo. Un envío sin respuesta tampoco garantiza que el mensaje llegara: por eso, cuando importa, se añade un <b>acuse de recibo</b>.</p>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">🔒</span> Seguridad y límites</h3>
+
+    <p>Por defecto, ESP-NOW no cifra los mensajes: cualquiera con otra placa y cerca de la tuya puede <b>leer</b> lo que envías e incluso enviarle mensajes falsos a la receptora si conoce su MAC. En un termómetro del aula no tiene importancia, pero sí si el mensaje fuese una orden. El bloque «Iniciar» tiene la opción «Encriptar comunicación» con dos claves (PMK y LMK) que añade cifrado, pero exige poner las mismas claves en las dos placas y, además, emparejar también la placa emisora en la receptora, aunque el envío sea en un solo sentido.</p>
+    <p>Para razonar: ¿qué pasaría si un compañero de otro grupo tuviese la MAC de tu receptora y enviase un mensaje? ¿Y si el mensaje encendiese un motor?</p>
+  </div>
+  <div class="card">
+    <h3 class="sec-title"><span class="ico">📓</span> Qué anotar en el porfolio</h3>
+
+    <ul><li>La MAC de la placa B y cómo la obtuviste.</li><li>Una captura de la consola de la B con varias lecturas.</li><li>La tabla de pruebas de distancia y obstáculos, con una conclusión.</li><li>Un fallo que tuvisteis y cómo lo localizasteis (por ejemplo, el valor que llegó como 0 por un error de tipo).</li><li>Una diferencia entre ESP-NOW y el servidor web de N3, con un ejemplo de cuándo usarías cada uno.</li></ul>
+  </div>
+  <div class="card quiz" data-id="n4">
+    <h3 class="sec-title"><span class="ico">✅</span> Comprueba lo que has aprendido</h3>
+    <div class="q" data-ans="b" data-why="ESP-NOW comunica las placas directamente, usando su dirección MAC. No necesita router." data-hint="Piensa en cómo se identifica cada placa.">
+      <p>1. ¿Qué necesita la placa emisora para mandar un mensaje a otra con ESP-NOW?</p>
+      <label><input type="radio" name="n4q1" value="a"> La IP de la otra placa.</label>
+      <label><input type="radio" name="n4q1" value="b"> La MAC de la otra placa.</label>
+      <label><input type="radio" name="n4q1" value="c"> La clave de la red Wi-Fi.</label>
+    </div>
+    <div class="q" data-ans="c" data-why="El receptor no necesita conocer la MAC del emisor: se limita a atender los mensajes que lleguen. Solo el emisor necesita la del destinatario." data-hint="Quien envía es quien tiene que saber a dónde.">
+      <p>2. Tienes dos placas, A (emisora) y B (receptora). ¿En qué placa escribes la MAC de la B?</p>
+      <label><input type="radio" name="n4q2" value="a"> En la B.</label>
+      <label><input type="radio" name="n4q2" value="b"> En las dos.</label>
+      <label><input type="radio" name="n4q2" value="c"> En la A.</label>
+    </div>
+    <div class="q" data-ans="a" data-why="ESP-NOW no se conecta a la red del centro, así que no necesita estar dada de alta en el filtrado por MAC." data-hint="¿A qué red se conecta una placa con ESP-NOW?">
+      <p>3. ¿Hay que dar de alta la MAC de las placas en «AndaRed IoT» para usar ESP-NOW?</p>
+      <label><input type="radio" name="n4q3" value="a"> No, porque no usa esa red.</label>
+      <label><input type="radio" name="n4q3" value="b"> Sí, siempre.</label>
+      <label><input type="radio" name="n4q3" value="c"> Solo la de la receptora.</label>
+    </div>
+    <div class="q" data-ans="b" data-why="Es un bloque de evento: se ejecuta cuando llega un mensaje, no dentro del bucle." data-hint="Piensa en qué momento se ejecuta.">
+      <p>4. El bloque «Al recibir datos» de la placa B…</p>
+      <label><input type="radio" name="n4q4" value="a"> Va dentro de Inicializar.</label>
+      <label><input type="radio" name="n4q4" value="b"> Es un bloque aparte que se ejecuta al llegar un mensaje.</label>
+      <label><input type="radio" name="n4q4" value="c"> Va dentro del Bucle y se repite siempre.</label>
+    </div>
+    <div class="q" data-ans="c" data-why="Sin cifrado, cualquiera cerca de las placas puede leer y falsificar mensajes. Si el mensaje es una orden, es un riesgo." data-hint="Piensa en quién puede estar cerca.">
+      <p>5. ¿Qué riesgo tiene mandar una orden con ESP-NOW sin cifrar?</p>
+      <label><input type="radio" name="n4q5" value="a"> Ninguno, porque no usa Internet.</label>
+      <label><input type="radio" name="n4q5" value="b"> Que la placa se apague.</label>
+      <label><input type="radio" name="n4q5" value="c"> Que otra placa cercana lea o falsifique el mensaje.</label>
+    </div>
+    <div class="q" data-ans="b" data-why="Con ESP-NOW el mensaje viaja como texto. Un número llega como los caracteres que lo forman y hay que tratarlo como número al recibirlo." data-hint="Piensa en qué recibe el bloque «Datos recibidos».">
+      <p>6. ¿Cómo viaja por ESP-NOW la lectura de un sensor?</p>
+      <label><input type="radio" name="n4q6" value="a"> Como un número que la otra placa usa directamente.</label>
+      <label><input type="radio" name="n4q6" value="b"> Como un texto.</label>
+      <label><input type="radio" name="n4q6" value="c"> Como una imagen.</label>
+    </div>
+    <div class="q" data-ans="c" data-why="Un valor entre comillas viaja como texto. Si lo lees como número, la placa devuelve 0 sin dar ningún error." data-hint="Mira las comillas del JSON.">
+      <p>7. El emisor manda <code>{"T":"26.2"}</code> y el receptor lee «T» como Número. ¿Qué muestra?</p>
+      <label><input type="radio" name="n4q7" value="a"> 26.2</label>
+      <label><input type="radio" name="n4q7" value="b"> Un mensaje de error.</label>
+      <label><input type="radio" name="n4q7" value="c"> 0</label>
+    </div>
+    <p><button type="button" class="chk">Comprobar</button><span class="score"></span></p>
+  </div>
+</section>
+
+<div class="pager"><a href="n3.html">← N3 · Servidor web</a></div>
+</main>
+<footer>
+  <div class="wrap">
+    <p>Material de <b>Robótica y Fabricación Digital II</b> · IES Murillo (Sevilla). Autor: Juan Antonio Pérez Rodríguez.
+    Textos, programas y código bajo licencia <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.es">CC BY-NC-SA 4.0</a>.</p>
+  </div>
+</footer>
+<script src="assets/app.js?v=890831c4"></script>
+</body>
+</html>
